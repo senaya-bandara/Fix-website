@@ -10,31 +10,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
-          colors: {
-            fix: {
-              50: '#eef7ff',
-              100: '#d9edff',
-              200: '#b9dbff',
-              300: '#90c4ff',
-              400: '#5aa4ff',
-              500: '#2d86ff',  /* "hello" blue */
-              600: '#1f6be6',
-              700: '#1b57be',
-              800: '#1a4a9a',
-              900: '#183f80'
-            }
-          },
-          boxShadow: {
-            soft: '0 10px 30px rgba(0,0,0,0.08)'
+
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+        colors: {
+          fix: {
+            50:  '#f4f3fb',
+            100: '#ebe9f8',
+            200: '#d9d6f1',
+            300: '#c1bdea',
+            400: '#a59fe0',
+            500: '#7C7AAC',  /* primary (requested) */
+            600: '#6f6aa3',
+            700: '#5d5890',
+            800: '#4b477a',
+            900: '#3e3b66'
           }
+        },
+        boxShadow: {
+          soft: '0 10px 30px rgba(0,0,0,0.08)'
         }
       }
     }
-  </script>
+  }
+</script>
+
   <style>
     html, body { height:100%; }
     .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,.7); }
