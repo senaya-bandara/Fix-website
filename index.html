@@ -527,100 +527,96 @@
 
   // ------- BOOKING MODAL -------
   function openBookModal(pid) {
-    const p = state.providers.find(x => x.id === pid);
-    if (!p) return;
+  const p = state.providers.find(x => x.id === pid);
+  if (!p) return;
 
-    const modal = $('#modal');
-    const body = $('#modal-body');
+  const modal = document.getElementById("modal");
+  const body = document.getElementById("modal-body");
 
-    body.innerHTML = `
-      <div class="space-y-1">
-        <div class="text-sm text-slate-600">Provider</div>
-        <div class="font-bold text-lg">${p.name} — ${p.category}</div>
-      </div>
-      <div class="grid md:grid-cols-2 gap-3">
-        <div>
-          <label class="block text-sm font-medium mb-1">Date</label>
-          <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Hours</label>
-          <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
-        </div>
+  body.innerHTML = `
+    <div class="space-y-1">
+      <div class="text-sm text-slate-600">Provider</div>
+      <div class="font-bold text-lg">${p.name} — ${p.category}</div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3">
+      <div>
+        <label class="block text-sm font-medium mb-1">Date</label>
+        <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
       </div>
       <div>
-        <label class="block text-sm font-medium mb-1">Address</label>
-        <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
+        <label class="block text-sm font-medium mb-1">Hours</label>
+        <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
       </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Notes</label>
-        <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
-      </div>
-      <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
-        <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
-        <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate * 3)}</div>
-      </div>
-      <div class="flex justify-end gap-3">
-        <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
-        <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
-      </div>
-    `;
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Address</label>
+      <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Notes</label>
+      <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
+    </div>
+    <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+      <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
+      <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate * 3)}</div>
+    </div>
+    <div class="flex justify-end gap-3">
+      <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+      <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
+    </div>
+  `;
 
-    // Dynamic total
-    const hoursInput = $('#bk-hours');
-    const totalEl = $('#bk-total');
-    hoursInput.addEventListener('input', () => {
-      const h = Math.max(1, Number(hoursInput.value || 1));
-      totalEl.textContent = `Total: LKR ${fmt(p.rate * h)}`;
-    });
+  const hoursInput = document.getElementById("bk-hours");
+  const totalEl = document.getElementById("bk-total");
+  hoursInput.addEventListener("input", () => {
+    const h = Math.max(1, Number(hoursInput.value || 1));
+    totalEl.textContent = `Total: LKR ${fmt(p.rate * h)}`;
+  });
 
-    // Cancel
-    $('#bk-cancel').onclick = closeModal;
+  document.getElementById("bk-cancel").onclick = closeModal;
 
-    // Confirm booking
-    $('#bk-confirm').onclick = () => {
-      const dateVal = $('#bk-date').value;
-      if (!dateVal) {
-        alert('Please select a date for your booking.');
-        return;
-      }
+  // ✅ Confirm booking handler – updates “My Bookings” instantly
+  document.getElementById("bk-confirm").onclick = () => {
+    const dateVal = document.getElementById("bk-date").value;
+    if (!dateVal) {
+      alert("Please select a date for your booking.");
+      return;
+    }
 
-      const hours = Math.max(1, Number(hoursInput.value || 1));
-      const booking = {
-        id: 'b' + Date.now(),
-        providerId: p.id,
-        providerName: p.name,
-        category: p.category,
-        date: dateVal,
-        hours,
-        address: $('#bk-address').value,
-        notes: $('#bk-notes').value,
-        rate: p.rate,
-        total: p.rate * hours,
-        status: 'Confirmed'
-      };
-
-      state.bookings.unshift(booking);
-      db.save(state);
-      updateNotifyBadge();
-      closeModal();
-
-      const toast = document.createElement('div');
-      toast.textContent = '✅ Booking confirmed successfully!';
-      toast.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2500);
+    const hours = Math.max(1, Number(hoursInput.value || 1));
+    const booking = {
+      id: "b" + Date.now(),
+      providerId: p.id,
+      providerName: p.name,
+      category: p.category,
+      date: dateVal,
+      hours,
+      address: document.getElementById("bk-address").value,
+      notes: document.getElementById("bk-notes").value,
+      rate: p.rate,
+      total: p.rate * hours,
+      status: "Confirmed",
     };
 
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-  }
+    // Save + refresh immediately
+    state.bookings.unshift(booking);
+    db.save(state);
 
-  function closeModal() {
-    const modal = $('#modal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
+    renderBookings();       // ✅ refresh “My Bookings” list right away
+    updateNotifyBadge();    // keep notification count in sync
+    closeModal();
+
+    // Toast message
+    const toast = document.createElement("div");
+    toast.textContent = "✅ Booking confirmed successfully!";
+    toast.className = "fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  };
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
 
   $('#modal-close').addEventListener('click', closeModal);
 
