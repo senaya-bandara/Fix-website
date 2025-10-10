@@ -702,6 +702,29 @@
     }
 
     document.addEventListener('DOMContentLoaded', boot);
+    <!-- Put this **right before** </body> (not inside <header> or <nav>) -->
+<button id="notify-btn"
+  class="fixed top-0 right-0 m-3 md:m-5 z-[999] p-3 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
+  aria-label="Notifications">
+  <!-- bell -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+  </svg>
+  <!-- badge -->
+  <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
+</button>
+
+<script>
+  const bell = document.getElementById('notify-btn');
+  if (bell) {
+    bell.addEventListener('click', () => {
+      alert('You have 3 new notifications (simulated).');
+      const badge = document.getElementById('notify-badge');
+      if (badge) badge.classList.add('hidden');
+    });
+  }
+</script>
+
   </script>
 </body>
 </html>
