@@ -681,34 +681,40 @@ document.addEventListener("DOMContentLoaded", () => {
   const notifyPanel = document.getElementById("notify-panel");
   const notifyClose = document.getElementById("notify-close");
 
-  function showSampleNotifications() {
-    const upcoming = getUpcomingBookings?.(14) || [];
-    if (upcoming.length > 0) return; // real data exists already
+ function showSampleNotifications() {
+  const upcoming = getUpcomingBookings?.(14) || [];
+  if (upcoming.length > 0) return; // show real ones if available
 
-    notifyList.innerHTML = `
-      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
-        <div class="flex items-center justify-between">
-          <div class="font-semibold text-slate-900">Nimali Jayasinghe</div>
-          <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 2 days</span>
-        </div>
-        <div class="text-sm text-slate-600 mt-1">Elder care • 2025-10-13 • 3h • LKR 7,500</div>
+  notifyList.innerHTML = `
+    <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+      <div class="flex items-center justify-between">
+        <div class="font-semibold text-slate-900">Elder care appointment with Nimali Jayasinghe</div>
+        <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 2 days</span>
       </div>
-      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
-        <div class="flex items-center justify-between">
-          <div class="font-semibold text-slate-900">Ravi Kannan</div>
-          <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 5 days</span>
-        </div>
-        <div class="text-sm text-slate-600 mt-1">Driving • 2025-10-16 • 4h • LKR 7,200</div>
+      <div class="text-sm text-slate-600 mt-1">Scheduled for <strong>Oct 13, 2025</strong> at your Colombo address (3 hours)</div>
+      <div class="text-xs text-slate-500 mt-1">Please confirm any special needs or accessibility requirements.</div>
+    </div>
+
+    <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+      <div class="flex items-center justify-between">
+        <div class="font-semibold text-slate-900">Driver booking with Ravi Kannan</div>
+        <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 5 days</span>
       </div>
-      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
-        <div class="flex items-center justify-between">
-          <div class="font-semibold text-slate-900">Ishara Perera</div>
-          <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 9 days</span>
-        </div>
-        <div class="text-sm text-slate-600 mt-1">Cleaning • 2025-10-20 • 2h • LKR 2,400</div>
+      <div class="text-sm text-slate-600 mt-1">Pickup planned for <strong>Oct 16, 2025</strong> from Kandy — 4 hours total</div>
+      <div class="text-xs text-slate-500 mt-1">Driver will call 30 mins before arrival.</div>
+    </div>
+
+    <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+      <div class="flex items-center justify-between">
+        <div class="font-semibold text-slate-900">Home cleaning by Ishara Perera</div>
+        <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 9 days</span>
       </div>
-    `;
-  }
+      <div class="text-sm text-slate-600 mt-1">Confirmed for <strong>Oct 20, 2025</strong> — 2 hours</div>
+      <div class="text-xs text-slate-500 mt-1">Remember to keep access keys and cleaning supplies ready.</div>
+    </div>
+  `;
+}
+
 
   // Show/hide panel on bell click
   notifyBtn?.addEventListener("click", (e) => {
