@@ -17,13 +17,10 @@
           colors: {
             fix: {
               50:'#ecfbf3',100:'#d3f6e3',200:'#a8ecc8',300:'#7de1ae',400:'#61d999',
-              500:'#4EC67E',  /* primary */
-              600:'#3fb870',700:'#2fa861',800:'#238a4f',900:'#1b6d3f'
+              500:'#4EC67E',600:'#3fb870',700:'#2fa861',800:'#238a4f',900:'#1b6d3f'
             }
           },
-          boxShadow: {
-            soft: '0 10px 30px rgba(0,0,0,0.08)'
-          }
+          boxShadow: { soft: '0 10px 30px rgba(0,0,0,0.08)' }
         }
       }
     }
@@ -56,7 +53,6 @@
         <a href="#home" class="text-white text-2xl font-extrabold tracking-tight">Fix</a>
       </div>
 
-      <!-- Separated menu -->
       <div class="hidden md:flex items-center text-white/90 font-medium divide-x divide-white/25">
         <a href="#browse" class="px-3 hover:text-white">Browse</a>
         <a href="#requests" class="px-3 hover:text-white">Requests</a>
@@ -64,17 +60,50 @@
         <a href="#bookings" class="px-3 hover:text-white">My Bookings</a>
       </div>
 
-      <!-- Right side: Sign in + Bell + Post -->
+      <!-- Right side: Sign in + Bell + Post (bell has a pop-up dropdown) -->
       <div class="flex items-center gap-3">
         <button id="btn-login" class="hidden md:inline-flex px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">Sign in</button>
 
-        <!-- Bell next to Sign in -->
-        <button id="notify-btn-nav" class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative" aria-label="Notifications">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
-          </svg>
-          <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
-        </button>
+        <!-- Bell + Popover -->
+        <div class="relative">
+          <button id="notify-btn-nav" aria-expanded="false"
+            class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
+            aria-label="Notifications">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+            </svg>
+            <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
+          </button>
+
+          <!-- Popover panel -->
+          <div id="notify-popover"
+               class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+              <div class="font-semibold text-slate-900">Notifications</div>
+              <button id="mark-read" class="text-xs text-fix-700 hover:underline">Mark all read</button>
+            </div>
+            <ul class="max-h-80 overflow-auto divide-y divide-slate-100">
+              <li class="p-4 hover:bg-slate-50">
+                <div class="text-sm font-medium text-slate-900">Booking confirmed</div>
+                <div class="text-sm text-slate-600">Nimali Jayasinghe accepted your request for 12 Oct.</div>
+                <div class="text-xs text-slate-400 mt-1">2m ago</div>
+              </li>
+              <li class="p-4 hover:bg-slate-50">
+                <div class="text-sm font-medium text-slate-900">New offer on your request</div>
+                <div class="text-sm text-slate-600">Kasun Madushanka offered Cleaning — LKR 1200/hr.</div>
+                <div class="text-xs text-slate-400 mt-1">1h ago</div>
+              </li>
+              <li class="p-4 hover:bg-slate-50">
+                <div class="text-sm font-medium text-slate-900">Reminder</div>
+                <div class="text-sm text-slate-600">Physiotherapy session with Naveen tomorrow 10:00.</div>
+                <div class="text-xs text-slate-400 mt-1">Yesterday</div>
+              </li>
+            </ul>
+            <div class="p-3 border-t border-slate-200 text-center">
+              <a href="#bookings" class="text-fix-700 text-sm hover:underline">View all activity →</a>
+            </div>
+          </div>
+        </div>
 
         <button id="btn-post" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold shadow-soft hover:bg-fix-700">Post a Request</button>
       </div>
@@ -299,7 +328,6 @@
   </div>
 
   <script>
-    // ------- Data layer (localStorage simulation) -------
     const seedProviders = [
       { id: 'p1', name: 'Nimali Jayasinghe', category: 'Elder care', location: 'Colombo', rate: 2500, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Compassionate caregiver with 6+ years hospital experience. First aid certified.' },
       { id: 'p2', name: 'Ravi Kannan', category: 'Driving', location: 'Kandy', rate: 1800, rating: 4.6, verified: false, languages: 'Tamil, Sinhala', bio: 'Professional driver with clean record. Airport pickups, day hires.' },
@@ -310,7 +338,6 @@
       { id: 'p7', name: 'Sunethra Silva', category: 'Elder care', location: 'Galle', rate: 2000, rating: 4.4, verified: false, languages: 'Sinhala', bio: 'Patient and reliable elder companion for day duties.' },
       { id: 'p8', name: 'Ahamed Rizvi', category: 'Event staff', location: 'Matara', rate: 1700, rating: 4.3, verified: true, languages: 'Sinhala, English', bio: 'Event waiter and setup crew for weddings and parties.' }
     ];
-
     const CATEGORIES = ['Elder care','Babysitting','Cleaning','Cooking','Driving','Event staff','Physiotherapy','Errands'];
     const LOCATIONS  = ['Colombo','Gampaha','Kandy','Galle','Matara','Jaffna','Negombo','Kalutara'];
 
@@ -325,10 +352,8 @@
       },
       save(data){ localStorage.setItem('fix-db', JSON.stringify(data)); }
     }
-
     let state = db.load();
 
-    // ------- Helpers -------
     const $ = sel => document.querySelector(sel);
     const $$ = sel => Array.from(document.querySelectorAll(sel));
     const fmt = n => new Intl.NumberFormat('en-LK').format(n);
@@ -336,7 +361,6 @@
     function badge(text, tone='emerald'){
       return `<span class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-${tone}-50 text-${tone}-700 border border-${tone}-200">${text}</span>`
     }
-
     function starRating(r){
       const full = Math.floor(r); const half = r - full >= .5; const empty = 5 - full - (half ? 1 : 0);
       return '<div class="flex items-center gap-0.5">'
@@ -347,7 +371,6 @@
         + '</div>'
     }
 
-    // ------- Populate filters & hero -------
     function initFilters(){
       const catSel = $('#filter-category');
       const locSel = $('#filter-location');
@@ -363,8 +386,6 @@
       });
 
       const trending = $('#trending');
-
-      // New trending cards with sample names
       const data = {
         'Elder care': ['Nimali Jayasinghe','Sunethra Silva','Anoma de Silva'],
         'Cleaning': ['Ishara Perera','Kasun Madushanka','Tharushi Senanayake'],
@@ -392,7 +413,6 @@
       }));
     }
 
-    // ------- Render providers -------
     function renderProviders(){
       const grid = $('#providers-grid');
       let items = [...state.providers];
@@ -431,7 +451,6 @@
       grid.innerHTML = html || `<div class="col-span-full text-[#E6FFF1]">No providers match your filters.</div>`;
     }
 
-    // ------- Requests board -------
     function renderRequests(){
       const list = $('#requests-list');
       list.innerHTML = state.requests.map((r,i)=>`
@@ -454,7 +473,6 @@
       list.querySelectorAll('[data-contactreq]').forEach(btn=>btn.addEventListener('click',()=>alert('Contact shared (simulated).')));
     }
 
-    // ------- Book modal -------
     function openBookModal(pid){
       const p = state.providers.find(x=>x.id===pid);
       if(!p) return;
@@ -495,31 +513,12 @@
       const total = ()=> $('#bk-total').textContent = 'Total: LKR ' + fmt(p.rate * Math.max(1, Number(hours.value||1)));
       hours.addEventListener('input', total);
 
-      $('#bk-cancel').onclick = closeModal;
-      $('#bk-confirm').onclick = ()=>{
-        const b = {
-          id: 'b'+Date.now(), providerId: p.id, providerName: p.name, category: p.category,
-          date: $('#bk-date').value, hours: Number($('#bk-hours').value||1),
-          address: $('#bk-address').value, notes: $('#bk-notes').value, rate: p.rate,
-          total: p.rate * Math.max(1, Number($('#bk-hours').value||1)),
-          status: 'Confirmed'
-        };
-        state.bookings.unshift(b); db.save(state); renderBookings(); closeModal();
-        alert('Booking confirmed! (simulated)');
-      }
-
-      document.getElementById('modal').classList.remove('hidden');
-      document.getElementById('modal').classList.add('flex');
+      $('#modal').classList.remove('hidden');
+      $('#modal').classList.add('flex');
     }
+    function closeModal(){ $('#modal').classList.add('hidden'); $('#modal').classList.remove('flex'); }
+    $('#modal-close').addEventListener('click', closeModal);
 
-    function closeModal(){
-      document.getElementById('modal').classList.add('hidden');
-      document.getElementById('modal').classList.remove('flex');
-    }
-
-    document.getElementById('modal-close').addEventListener('click', closeModal);
-
-    // ------- Render bookings -------
     function renderBookings(){
       const list = $('#bookings-list');
       list.innerHTML = state.bookings.map(b=>`
@@ -547,37 +546,25 @@
         const bk = state.bookings.find(x=>x.id===id); if(!bk) return;
         bk.status = 'Cancelled'; db.save(state); renderBookings();
       }));
-
       list.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.rebook)));
     }
 
-    // ------- Post a request modal -------
-    function openPostModal(){
-      document.getElementById('post-modal').classList.remove('hidden');
-      document.getElementById('post-modal').classList.add('flex');
-    }
-    function closePostModal(){
-      document.getElementById('post-modal').classList.add('hidden');
-      document.getElementById('post-modal').classList.remove('flex');
-    }
+    function openPostModal(){ $('#post-modal').classList.remove('hidden'); $('#post-modal').classList.add('flex'); }
+    function closePostModal(){ $('#post-modal').classList.add('hidden'); $('#post-modal').classList.remove('flex'); }
+    $('#post-close').addEventListener('click', closePostModal);
+    $('#req-cancel').addEventListener('click', e=>{ e.preventDefault(); closePostModal(); });
 
-    document.getElementById('post-close').addEventListener('click', closePostModal);
-    document.getElementById('req-cancel').addEventListener('click', e=>{ e.preventDefault(); closePostModal(); });
-
-    // ------- Event bindings -------
     function bindEvents(){
-      document.getElementById('search-form').addEventListener('submit', e=>{
+      $('#search-form').addEventListener('submit', e=>{
         e.preventDefault();
-        const qS = document.getElementById('q-service').value.toLowerCase();
-        const qL = document.getElementById('q-location').value.toLowerCase();
-        const items = state.providers.filter(p => (
-          !qS || p.category.toLowerCase().includes(qS) || p.name.toLowerCase().includes(qS)
-        ) && (!qL || p.location.toLowerCase().includes(qL)));
+        const qS = $('#q-service').value.toLowerCase();
+        const qL = $('#q-location').value.toLowerCase();
+        const items = state.providers.filter(p => (!qS || p.category.toLowerCase().includes(qS) || p.name.toLowerCase().includes(qS)) && (!qL || p.location.toLowerCase().includes(qL)));
 
-        document.getElementById('filter-category').value = '';
-        document.getElementById('filter-location').value = '';
-        document.getElementById('sort-by').value = 'top';
-        const grid = document.getElementById('providers-grid');
+        $('#filter-category').value = '';
+        $('#filter-location').value = '';
+        $('#sort-by').value = 'top';
+        const grid = $('#providers-grid');
         grid.innerHTML = items.map(p=>`
           <article class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
             <div class="flex items-start justify-between gap-3">
@@ -599,88 +586,104 @@
           </article>
         `).join('') || `<div class="col-span-full text-[#E6FFF1]">No results for your search.</div>`;
 
-        document.querySelectorAll('#providers-grid [data-book]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.book)));
+        $$('#providers-grid [data-book]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.book)));
         location.hash = '#browse';
       });
 
-      document.getElementById('filter-category').addEventListener('change', renderProviders);
-      document.getElementById('filter-location').addEventListener('change', renderProviders);
-      document.getElementById('sort-by').addEventListener('change', renderProviders);
+      $('#filter-category').addEventListener('change', renderProviders);
+      $('#filter-location').addEventListener('change', renderProviders);
+      $('#sort-by').addEventListener('change', renderProviders);
 
-      document.getElementById('btn-post').addEventListener('click', openPostModal);
-      document.getElementById('btn-post-2').addEventListener('click', openPostModal);
+      $('#btn-post').addEventListener('click', openPostModal);
+      $('#btn-post-2').addEventListener('click', openPostModal);
 
-      document.getElementById('request-form').addEventListener('submit', e=>{
+      $('#request-form').addEventListener('submit', e=>{
         e.preventDefault();
         const r = {
           id: 'r'+Date.now(),
-          title: document.getElementById('req-title').value,
-          location: document.getElementById('req-location').value,
-          budget: Number(document.getElementById('req-budget').value||0),
-          date: document.getElementById('req-date').value,
-          contact: document.getElementById('req-contact').value,
-          details: document.getElementById('req-details').value
+          title: $('#req-title').value,
+          location: $('#req-location').value,
+          budget: Number($('#req-budget').value||0),
+          date: $('#req-date').value,
+          contact: $('#req-contact').value,
+          details: $('#req-details').value
         };
         state.requests.unshift(r); db.save(state); renderRequests(); closePostModal();
       });
 
-      document.getElementById('pro-form').addEventListener('submit', e=>{
+      $('#pro-form').addEventListener('submit', e=>{
         e.preventDefault();
         const p = {
           id: 'p'+Date.now(),
-          name: document.getElementById('pro-name').value,
-          phone: document.getElementById('pro-phone').value,
-          category: document.getElementById('pro-category').value,
-          location: document.getElementById('pro-location').value,
-          rate: Number(document.getElementById('pro-rate').value||0),
+          name: $('#pro-name').value,
+          phone: $('#pro-phone').value,
+          category: $('#pro-category').value,
+          location: $('#pro-location').value,
+          rate: Number($('#pro-rate').value||0),
           rating: 5.0,
-          verified: document.getElementById('pro-verified').checked,
-          languages: document.getElementById('pro-languages').value,
-          bio: document.getElementById('pro-bio').value
+          verified: $('#pro-verified').checked,
+          languages: $('#pro-languages').value,
+          bio: $('#pro-bio').value
         };
         state.providers.unshift(p); db.save(state);
-        document.getElementById('pro-form').reset();
+        $('#pro-form').reset();
         renderProviders();
         alert('Profile created! Your listing is now live.');
         location.hash = '#browse';
       });
     }
 
-    // ------- Router (hash-based) -------
     function showSection(hash){
       const id = hash.replace('#','') || 'home';
       ['home','browse','requests','become-pro','bookings'].forEach(sec=>{
         const el = document.getElementById(sec);
         if(!el) return;
-        if (sec==='home') {
-          document.querySelector('header').style.display = '';
-        }
+        if (sec==='home') { document.querySelector('header').style.display = ''; }
         el.style.scrollMarginTop = '80px';
       });
       const target = document.getElementById(id);
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
     window.addEventListener('hashchange', ()=>showSection(location.hash));
 
-    // ------- Boot -------
     function boot(){
       initFilters();
       renderProviders();
       renderRequests();
       renderBookings();
       bindEvents();
-      document.getElementById('year').textContent = new Date().getFullYear();
+      $('#year').textContent = new Date().getFullYear();
       showSection(location.hash || '#home');
     }
-
     document.addEventListener('DOMContentLoaded', boot);
 
-    // Bell click handler
-    document.getElementById('notify-btn-nav')?.addEventListener('click', () => {
-      alert('You have 3 new notifications (simulated).');
-      document.getElementById('notify-badge')?.classList.add('hidden');
+    // Notifications popover logic
+    const bellBtn = document.getElementById('notify-btn-nav');
+    const pop = document.getElementById('notify-popover');
+    const badge = document.getElementById('notify-badge');
+    const markRead = document.getElementById('mark-read');
+
+    function closePop() {
+      pop.classList.add('hidden');
+      bellBtn.setAttribute('aria-expanded','false');
+    }
+    function openPop() {
+      pop.classList.remove('hidden');
+      bellBtn.setAttribute('aria-expanded','true');
+      badge?.classList.add('hidden');
+    }
+
+    bellBtn?.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      if (pop.classList.contains('hidden')) openPop(); else closePop();
     });
+    markRead?.addEventListener('click', (e)=>{ e.preventDefault(); badge?.classList.add('hidden'); });
+
+    document.addEventListener('click', (e)=>{
+      if (!pop.contains(e.target) && e.target !== bellBtn && !bellBtn.contains(e.target)) closePop();
+    });
+    document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closePop(); });
   </script>
 </body>
 </html>
+
