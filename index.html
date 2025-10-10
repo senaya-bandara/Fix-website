@@ -44,6 +44,16 @@
   
 </head>
 <body class="text-slate-800">
+  <button id="notify-btn"
+  style="position:fixed; top:0; right:0; margin:12px; z-index:99999;"
+  class="rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
+  aria-label="Notifications">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+  </svg>
+  <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
+</button>
+
   <!-- Full-page background gradient -->
   <div class="fixed inset-0 -z-50">
     <div class="absolute inset-0 bg-gradient-to-br from-[#4EC67E] via-[#1F6D47] to-[#0B3E29]"></div>
@@ -689,5 +699,12 @@
       document.getElementById('notify-badge')?.classList.add('hidden');
     });
   </script>
+  <script>
+  document.getElementById('notify-btn')?.addEventListener('click', () => {
+    alert('You have 3 new notifications (simulated).');
+    document.getElementById('notify-badge')?.classList.add('hidden');
+  });
+</script>
+
 </body>
 </html>
