@@ -659,6 +659,8 @@ function renderProviders(){
 
     // ------- Book modal -------
 
+// ------- Book modal -------
+
 function openBookModal(pid) {
   const p = state.providers.find(x => x.id === pid);
   if (!p) return;
@@ -709,6 +711,56 @@ function openBookModal(pid) {
 
   // Cancel closes modal
   document.getElementById('bk-cancel').onclick = closeModal;
+
+  // Confirm booking handler
+  document.getElementById('bk-confirm').onclick = () => {
+    const dateVal = document.getElementById('bk-date').value;
+    if (!dateVal) {
+      alert('Please select a date for your booking.');
+      return;
+    }
+
+    const hours = Math.max(1, Number(hoursInput.value || 1));
+    const booking = {
+      id: 'b' + Date.now(),
+      providerId: p.id,
+      providerName: p.name,
+      category: p.category,
+      date: dateVal,
+      hours,
+      address: document.getElementById('bk-address').value,
+      notes: document.getElementById('bk-notes').value,
+      rate: p.rate,
+      total: p.rate * hours,
+      status: 'Confirmed'
+    };
+
+    state.bookings.unshift(booking);
+    db.save(state);
+    renderBookings();
+    updateNotifyBadge();
+    closeModal();
+
+    // Popup toast
+    const toast = document.createElement('div');
+    toast.textContent = '✅ Booking confirmed successfully!';
+    toast.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft animate-fade';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  };
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeModal() {
+  const modal = document.getElementById('modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+
 
   // Confirm booking handler
   document.getElementById('bk-confirm').onclick = () => {
@@ -805,6 +857,20 @@ function renderBookings(){
 
     // ------- Event bindings -------
     function bindEvents(){
+      // --- Nav buttons ---
+document.getElementById('btn-login').addEventListener('click', () => {
+  alert('Sign-in simulation: feature coming soon.');
+});
+
+document.querySelector('a[href="#bookings"]').addEventListener('click', e => {
+  e.preventDefault();
+  location.hash = '#bookings';
+  alert('Scroll to My Bookings section below.');
+});
+
+document.getElementById('btn-post').addEventListener('click', openPostModal);
+document.getElementById('btn-post-2').addEventListener('click', openPostModal);
+
       document.getElementById('search-form').addEventListener('submit', e=>{
         e.preventDefault();
         const qS = document.getElementById('q-service').value.toLowerCase();
@@ -1005,10 +1071,11 @@ function renderBookings(){
 
 
     // Bell click handler
-    document.getElementById('notify-btn-nav')?.addEventListener('click', () => {
-      alert('You have 3 new notifications (simulated).');
-      document.getElementById('notify-badge')?.classList.add('hidden');
-    });
+document.getElementById('notify-btn-nav')?.addEventListener('click', () => {
+  togglePanel();
+});
+
+
   </script>
 </body>
 </html>
