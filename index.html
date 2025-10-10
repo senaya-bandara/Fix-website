@@ -494,563 +494,160 @@
     </div>
   </div>
 
-  <script>
-    // ------- Data layer (localStorage simulation) -------
-    const seedProviders = [
-      { id: 'p1', name: 'Nimali Jayasinghe', category: 'Elder care', location: 'Colombo', rate: 2500, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Compassionate caregiver with 6+ years hospital experience. First aid certified.' },
-      { id: 'p2', name: 'Ravi Kannan', category: 'Driving', location: 'Kandy', rate: 1800, rating: 4.6, verified: false, languages: 'Tamil, Sinhala', bio: 'Professional driver with clean record. Airport pickups, day hires.' },
-      { id: 'p3', name: 'Ishara Perera', category: 'Cleaning', location: 'Colombo', rate: 1200, rating: 4.7, verified: true, languages: 'Sinhala', bio: 'Deep cleaning specialist for apartments and offices.' },
-      { id: 'p4', name: 'Thushara Ranathunga', category: 'Cooking', location: 'Gampaha', rate: 1500, rating: 4.5, verified: true, languages: 'Sinhala', bio: 'Home-cooked Sri Lankan meals; vegetarian options available.' },
-      { id: 'p5', name: 'Naveen Nadarajah', category: 'Physiotherapy', location: 'Jaffna', rate: 3000, rating: 4.8, verified: true, languages: 'Tamil, English', bio: 'Licensed physio for post-op recovery and mobility.' },
-      { id: 'p6', name: 'Dilini Fernando', category: 'Babysitting', location: 'Colombo', rate: 2200, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Early childhood trained nanny. CPR certified.' },
-      { id: 'p7', name: 'Sunethra Silva', category: 'Elder care', location: 'Galle', rate: 2000, rating: 4.4, verified: false, languages: 'Sinhala', bio: 'Patient and reliable elder companion for day duties.' },
-      { id: 'p8', name: 'Ahamed Rizvi', category: 'Event staff', location: 'Matara', rate: 1700, rating: 4.3, verified: true, languages: 'Sinhala, English', bio: 'Event waiter and setup crew for weddings and parties.' }
-    ];
+<script>
+  // ------- Data layer -------
+  const seedProviders = [
+    { id: 'p1', name: 'Nimali Jayasinghe', category: 'Elder care', location: 'Colombo', rate: 2500, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Compassionate caregiver with 6+ years hospital experience. First aid certified.' },
+    { id: 'p2', name: 'Ravi Kannan', category: 'Driving', location: 'Kandy', rate: 1800, rating: 4.6, verified: false, languages: 'Tamil, Sinhala', bio: 'Professional driver with clean record. Airport pickups, day hires.' },
+    { id: 'p3', name: 'Ishara Perera', category: 'Cleaning', location: 'Colombo', rate: 1200, rating: 4.7, verified: true, languages: 'Sinhala', bio: 'Deep cleaning specialist for apartments and offices.' },
+    { id: 'p4', name: 'Thushara Ranathunga', category: 'Cooking', location: 'Gampaha', rate: 1500, rating: 4.5, verified: true, languages: 'Sinhala', bio: 'Home-cooked Sri Lankan meals; vegetarian options available.' },
+    { id: 'p6', name: 'Dilini Fernando', category: 'Babysitting', location: 'Colombo', rate: 2200, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Early childhood trained nanny. CPR certified.' },
+    { id: 'p8', name: 'Ahamed Rizvi', category: 'Event staff', location: 'Matara', rate: 1700, rating: 4.3, verified: true, languages: 'Sinhala, English', bio: 'Event waiter and setup crew for weddings and parties.' }
+  ];
 
-    const CATEGORIES = ['Elder care','Babysitting','Cleaning','Cooking','Driving','Event staff','Physiotherapy','Errands'];
-    const LOCATIONS  = ['Colombo','Gampaha','Kandy','Galle','Matara','Jaffna','Negombo','Kalutara'];
-
-    const db = {
-      load() {
-        const data = JSON.parse(localStorage.getItem('fix-db') || '{}');
-        if (!data.providers) data.providers = seedProviders;
-        if (!data.requests)  data.requests  = [];
-        if (!data.bookings)  data.bookings  = [];
-        localStorage.setItem('fix-db', JSON.stringify(data));
-        return data;
-      },
-      save(data){ localStorage.setItem('fix-db', JSON.stringify(data)); }
-    }
-
-    let state = db.load();
-
-    // ------- Helpers -------
-    const $ = sel => document.querySelector(sel);
-    const $$ = sel => Array.from(document.querySelectorAll(sel));
-    const fmt = n => new Intl.NumberFormat('en-LK').format(n);
-
-    function badge(text, tone='emerald'){
-      return `<span class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-${tone}-50 text-${tone}-700 border border-${tone}-200">${text}</span>`
-    }
-
-    function starRating(r){
-      const full = Math.floor(r); const half = r - full >= .5; const empty = 5 - full - (half ? 1 : 0);
-      return '<div class="flex items-center gap-0.5">'
-        + '★'.repeat(full)
-        + (half ? '☆' : '')
-        + '✩'.repeat(empty)
-        + `<span class="ml-1 text-sm text-slate-600">${r.toFixed(1)}</span>`
-        + '</div>'
-    }
-
-    // ------- Populate filters & hero -------
-    function initFilters(){
-      const catSel = $('#filter-category');
-      const locSel = $('#filter-location');
-      const proCat = $('#pro-category');
-      const proLoc = $('#pro-location');
-      const reqLoc = $('#req-location');
-
-      CATEGORIES.forEach(c=>{
-        [catSel, proCat].forEach(s=>{ const o=document.createElement('option'); o.value=o.textContent=c; s.appendChild(o); });
-      });
-      LOCATIONS.forEach(l=>{
-        [locSel, proLoc, reqLoc].forEach(s=>{ const o=document.createElement('option'); o.value=o.textContent=l; s.appendChild(o); });
-      });
-
-      const trending = $('#trending');
-
-      // New trending cards with sample names
-      const data = {
-        'Elder care': ['Nimali Jayasinghe','Sunethra Silva','Anoma de Silva'],
-        'Cleaning': ['Ishara Perera','Kasun Madushanka','Tharushi Senanayake'],
-        'Babysitting': ['Dilini Fernando','Menaka Peiris','Ruwani Hettiarachchi'],
-        'Driving': ['Ravi Kannan','Saman Kumara','Tharaka Jayasuriya']
-      };
-      const topCats = Object.keys(data);
-      trending.innerHTML = topCats.map(c=>{
-        const names = data[c];
-        return `
-          <li class="p-4 rounded-xl border border-slate-200 hover:shadow-soft transition bg-white">
-            <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
-            <div class="font-bold text-slate-900 mt-1">${c}</div>
-            <ul class="mt-2 text-slate-700 text-sm space-y-1">
-              ${names.map(n=>`<li class="px-2 py-1 rounded-lg bg-slate-50 border border-slate-200">${n}</li>`).join('')}
-            </ul>
-            <a href="#browse" data-cat="${c}" class="mt-3 inline-flex text-fix-600 hover:underline">Explore →</a>
-          </li>
-        `;
-      }).join('');
-
-      trending.querySelectorAll('a[data-cat]').forEach(a=>a.addEventListener('click', e=>{
-        e.preventDefault();
-        catSel.value = a.dataset.cat; renderProviders(); location.hash = '#browse';
-      }));
-    }
-
-    // ------- Render providers -------
-
-function renderProviders(){
-  const grid = document.getElementById('providers-grid');
-  let items = [...state.providers];
-  const cat = document.getElementById('filter-category').value;
-  const loc = document.getElementById('filter-location').value;
-  const sort= document.getElementById('sort-by').value;
-
-  if (cat) items = items.filter(p=>p.category===cat);
-  if (loc) items = items.filter(p=>p.location===loc);
-  if (sort==='top') items.sort((a,b)=>b.rating-a.rating);
-  if (sort==='price-asc') items.sort((a,b)=>a.rate-b.rate);
-  if (sort==='price-desc') items.sort((a,b)=>b.rate-a.rate);
-
-  const html = items.map(p=>`
-    <article class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <h3 class="text-lg font-bold">${p.name}</h3>
-          <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
-          <div class="mt-2 flex items-center gap-2">${starRating(p.rating)} ${p.verified?badge('Verified','fix'):''}</div>
-        </div>
-        <div class="text-right">
-          <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
-          <div class="text-sm text-slate-600">per hour</div>
-        </div>
-      </div>
-      <p class="mt-3 text-slate-700">${p.bio}</p>
-      <div class="mt-3 text-sm text-slate-600">Languages: ${p.languages||'—'}</div>
-      <div class="mt-4 flex gap-2">
-        <button class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600" data-book="${p.id}">Book</button>
-        <button class="px-4 py-2 rounded-xl bg-slate-100" data-contact="${p.id}">Contact</button>
-      </div>
-    </article>
-  `).join('');
-
-  grid.innerHTML = html || `<div class="col-span-full text-[#E6FFF1]">No providers match your filters.</div>`;
-
-  // ⬇️ Activate the “Book” buttons after rendering
-  grid.querySelectorAll('[data-book]').forEach(btn=>{
-    btn.addEventListener('click', ()=>openBookModal(btn.dataset.book));
-  });
-}
-
-
-    // ------- Requests board -------
-    function renderRequests(){
-      const list = $('#requests-list');
-      list.innerHTML = state.requests.map((r,i)=>`
-        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold">${r.title}</h3>
-            ${badge(r.location,'fix')}
-          </div>
-          <div class="mt-1 text-slate-600 text-sm">Needed on ${r.date}</div>
-          <p class="mt-2">${r.details||''}</p>
-          <div class="mt-3 font-semibold">Budget: LKR ${fmt(r.budget)}</div>
-          <div class="mt-4 flex gap-2">
-            <button class="px-4 py-2 rounded-xl bg-emerald-400 text-slate-900 font-semibold" data-offer="${i}">Offer service</button>
-            <button class="px-4 py-2 rounded-xl bg-slate-100" data-contactreq="${i}">Contact</button>
-          </div>
-        </div>
-      `).join('') || `<div class="text-[#E6FFF1]">No requests yet. Be the first to post!</div>`;
-
-      list.querySelectorAll('[data-offer]').forEach(btn=>btn.addEventListener('click',()=>alert('Offer sent (simulated).')));
-      list.querySelectorAll('[data-contactreq]').forEach(btn=>btn.addEventListener('click',()=>alert('Contact shared (simulated).')));
-    }
-
-    // ------- Book modal -------
-
-// ------- Book modal -------
-
-function openBookModal(pid) {
-  const p = state.providers.find(x => x.id === pid);
-  if (!p) return;
-
-  const body = document.getElementById('modal-body');
-  const modal = document.getElementById('modal');
-
-  body.innerHTML = `
-    <div class="space-y-1">
-      <div class="text-sm text-slate-600">Provider</div>
-      <div class="font-bold text-lg">${p.name} — ${p.category}</div>
-    </div>
-    <div class="grid md:grid-cols-2 gap-3">
-      <div>
-        <label class="block text-sm font-medium mb-1">Date</label>
-        <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Hours</label>
-        <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
-      </div>
-    </div>
-    <div>
-      <label class="block text-sm font-medium mb-1">Address</label>
-      <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
-    </div>
-    <div>
-      <label class="block text-sm font-medium mb-1">Notes</label>
-      <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
-    </div>
-    <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
-      <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
-      <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate * 3)}</div>
-    </div>
-    <div class="flex justify-end gap-3">
-      <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
-      <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
-    </div>
-  `;
-
-  // Update total dynamically
-  const hoursInput = document.getElementById('bk-hours');
-  const totalEl = document.getElementById('bk-total');
-  hoursInput.addEventListener('input', () => {
-    const hours = Math.max(1, Number(hoursInput.value || 1));
-    totalEl.textContent = `Total: LKR ${fmt(p.rate * hours)}`;
-  });
-
-  // Cancel closes modal
-  document.getElementById('bk-cancel').onclick = closeModal;
-
-  // Confirm booking handler
-  document.getElementById('bk-confirm').onclick = () => {
-    const dateVal = document.getElementById('bk-date').value;
-    if (!dateVal) {
-      alert('Please select a date for your booking.');
-      return;
-    }
-
-    const hours = Math.max(1, Number(hoursInput.value || 1));
-    const booking = {
-      id: 'b' + Date.now(),
-      providerId: p.id,
-      providerName: p.name,
-      category: p.category,
-      date: dateVal,
-      hours,
-      address: document.getElementById('bk-address').value,
-      notes: document.getElementById('bk-notes').value,
-      rate: p.rate,
-      total: p.rate * hours,
-      status: 'Confirmed'
-    };
-
-    state.bookings.unshift(booking);
-    db.save(state);
-    renderBookings();
-    updateNotifyBadge();
-    closeModal();
-
-    // Popup toast
-    const toast = document.createElement('div');
-    toast.textContent = '✅ Booking confirmed successfully!';
-    toast.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft animate-fade';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
+  const db = {
+    load() {
+      const data = JSON.parse(localStorage.getItem('fix-db') || '{}');
+      if (!data.providers) data.providers = seedProviders;
+      if (!data.bookings) data.bookings = [];
+      localStorage.setItem('fix-db', JSON.stringify(data));
+      return data;
+    },
+    save(data) { localStorage.setItem('fix-db', JSON.stringify(data)); }
   };
 
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-}
+  let state = db.load();
+  const $ = s => document.querySelector(s);
+  const fmt = n => new Intl.NumberFormat('en-LK').format(n);
 
-function closeModal() {
-  const modal = document.getElementById('modal');
-  modal.classList.add('hidden');
-  modal.classList.remove('flex');
-}
+  // ------- BOOKING MODAL -------
+  function openBookModal(pid) {
+    const p = state.providers.find(x => x.id === pid);
+    if (!p) return;
 
-document.getElementById('modal-close').addEventListener('click', closeModal);
+    const modal = $('#modal');
+    const body = $('#modal-body');
 
-
-  // Confirm booking handler
-  document.getElementById('bk-confirm').onclick = () => {
-    const dateVal = document.getElementById('bk-date').value;
-    if (!dateVal) {
-      alert('Please select a date for your booking.');
-      return;
-    }
-
-    const hours = Math.max(1, Number(hoursInput.value || 1));
-    const booking = {
-      id: 'b' + Date.now(),
-      providerId: p.id,
-      providerName: p.name,
-      category: p.category,
-      date: dateVal,
-      hours,
-      address: document.getElementById('bk-address').value,
-      notes: document.getElementById('bk-notes').value,
-      rate: p.rate,
-      total: p.rate * hours,
-      status: 'Confirmed'
-    };
-
-    state.bookings.unshift(booking);
-    db.save(state);
-    renderBookings();
-    updateNotifyBadge();
-    closeModal();
-
-    alert('✅ Booking confirmed!');
-  };
-
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-}
-
-function closeModal() {
-  const modal = document.getElementById('modal');
-  modal.classList.add('hidden');
-  modal.classList.remove('flex');
-}
-
-
-    document.getElementById('modal-close').addEventListener('click', closeModal);
-
-
-function renderBookings(){
-  const list = document.getElementById('bookings-list');
-  list.innerHTML = state.bookings.map(b=>`
-    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
-      <div class="flex items-center justify-between">
+    body.innerHTML = `
+      <div class="space-y-1">
+        <div class="text-sm text-slate-600">Provider</div>
+        <div class="font-bold text-lg">${p.name} — ${p.category}</div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-3">
         <div>
-          <div class="font-bold">${b.providerName}</div>
-          <div class="text-slate-600 text-sm">${b.category} • ${b.date} • ${b.hours}h</div>
+          <label class="block text-sm font-medium mb-1">Date</label>
+          <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
         </div>
-        <div class="text-right">
-          <div class="font-extrabold">LKR ${fmt(b.total)}</div>
-          ${badge(b.status, b.status==='Confirmed'?'emerald':'slate')}
+        <div>
+          <label class="block text-sm font-medium mb-1">Hours</label>
+          <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
         </div>
       </div>
-      <div class="mt-3 text-sm text-slate-700">${b.address}</div>
-      <div class="mt-4 flex gap-2">
-        <button class="px-4 py-2 rounded-xl bg-slate-100" data-cancel="${b.id}">Cancel</button>
-        <button class="px-4 py-2 rounded-xl bg-fix-500 text-white" data-rebook="${b.providerId}">Rebook</button>
+      <div>
+        <label class="block text-sm font-medium mb-1">Address</label>
+        <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
       </div>
-    </div>
-  `).join('') || `<div class="text-slate-600">No bookings yet.</div>`;
+      <div>
+        <label class="block text-sm font-medium mb-1">Notes</label>
+        <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
+      </div>
+      <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+        <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
+        <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate * 3)}</div>
+      </div>
+      <div class="flex justify-end gap-3">
+        <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+        <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
+      </div>
+    `;
 
-  list.querySelectorAll('[data-cancel]').forEach(btn=>btn.addEventListener('click',()=>{
-    const id = btn.dataset.cancel;
-    const bk = state.bookings.find(x=>x.id===id); if(!bk) return;
-    bk.status = 'Cancelled'; db.save(state); renderBookings();
-    updateNotifyBadge(); // ⬅️ keep notifications in sync
-  }));
+    // Dynamic total
+    const hoursInput = $('#bk-hours');
+    const totalEl = $('#bk-total');
+    hoursInput.addEventListener('input', () => {
+      const h = Math.max(1, Number(hoursInput.value || 1));
+      totalEl.textContent = `Total: LKR ${fmt(p.rate * h)}`;
+    });
 
-  list.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.rebook)));
-}
+    // Cancel
+    $('#bk-cancel').onclick = closeModal;
 
-
-
-    // ------- Post a request modal -------
-    function openPostModal(){
-      document.getElementById('post-modal').classList.remove('hidden');
-      document.getElementById('post-modal').classList.add('flex');
-    }
-    function closePostModal(){
-      document.getElementById('post-modal').classList.add('hidden');
-      document.getElementById('post-modal').classList.remove('flex');
-    }
-
-    document.getElementById('post-close').addEventListener('click', closePostModal);
-    document.getElementById('req-cancel').addEventListener('click', e=>{ e.preventDefault(); closePostModal(); });
-
-    // ------- Event bindings -------
-    function bindEvents(){
-      // --- Nav buttons ---
-document.getElementById('btn-login').addEventListener('click', () => {
-  alert('Sign-in simulation: feature coming soon.');
-});
-
-document.querySelector('a[href="#bookings"]').addEventListener('click', e => {
-  e.preventDefault();
-  location.hash = '#bookings';
-  alert('Scroll to My Bookings section below.');
-});
-
-document.getElementById('btn-post').addEventListener('click', openPostModal);
-document.getElementById('btn-post-2').addEventListener('click', openPostModal);
-
-      document.getElementById('search-form').addEventListener('submit', e=>{
-        e.preventDefault();
-        const qS = document.getElementById('q-service').value.toLowerCase();
-        const qL = document.getElementById('q-location').value.toLowerCase();
-        const items = state.providers.filter(p => (
-          !qS || p.category.toLowerCase().includes(qS) || p.name.toLowerCase().includes(qS)
-        ) && (!qL || p.location.toLowerCase().includes(qL)));
-
-        document.getElementById('filter-category').value = '';
-        document.getElementById('filter-location').value = '';
-        document.getElementById('sort-by').value = 'top';
-        const grid = document.getElementById('providers-grid');
-        grid.innerHTML = items.map(p=>`
-          <article class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <h3 class="text-lg font-bold">${p.name}</h3>
-                <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
-                <div class="mt-2 flex items-center gap-2">${starRating(p.rating)} ${p.verified?badge('Verified','fix'):''}</div>
-              </div>
-              <div class="text-right">
-                <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
-                <div class="text-sm text-slate-600">per hour</div>
-              </div>
-            </div>
-            <p class="mt-3 text-slate-700">${p.bio}</p>
-            <div class="mt-3 text-sm text-slate-600">Languages: ${p.languages||'—'}</div>
-            <div class="mt-4 flex gap-2">
-              <button class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold" data-book="${p.id}">Book</button>
-            </div>
-          </article>
-        `).join('') || `<div class="col-span-full text-[#E6FFF1]">No results for your search.</div>`;
-
-        document.querySelectorAll('#providers-grid [data-book]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.book)));
-        location.hash = '#browse';
-      });
-
-      document.getElementById('filter-category').addEventListener('change', renderProviders);
-      document.getElementById('filter-location').addEventListener('change', renderProviders);
-      document.getElementById('sort-by').addEventListener('change', renderProviders);
-
-      document.getElementById('btn-post').addEventListener('click', openPostModal);
-      document.getElementById('btn-post-2').addEventListener('click', openPostModal);
-
-      document.getElementById('request-form').addEventListener('submit', e=>{
-        e.preventDefault();
-        const r = {
-          id: 'r'+Date.now(),
-          title: document.getElementById('req-title').value,
-          location: document.getElementById('req-location').value,
-          budget: Number(document.getElementById('req-budget').value||0),
-          date: document.getElementById('req-date').value,
-          contact: document.getElementById('req-contact').value,
-          details: document.getElementById('req-details').value
-        };
-        state.requests.unshift(r); db.save(state); renderRequests(); closePostModal();
-      });
-
-      document.getElementById('pro-form').addEventListener('submit', e=>{
-        e.preventDefault();
-        const p = {
-          id: 'p'+Date.now(),
-          name: document.getElementById('pro-name').value,
-          phone: document.getElementById('pro-phone').value,
-          category: document.getElementById('pro-category').value,
-          location: document.getElementById('pro-location').value,
-          rate: Number(document.getElementById('pro-rate').value||0),
-          rating: 5.0,
-          verified: document.getElementById('pro-verified').checked,
-          languages: document.getElementById('pro-languages').value,
-          bio: document.getElementById('pro-bio').value
-        };
-        state.providers.unshift(p); db.save(state);
-        document.getElementById('pro-form').reset();
-        renderProviders();
-        alert('Profile created! Your listing is now live.');
-        location.hash = '#browse';
-      });
-    }
-
-    // ------- Router (hash-based) -------
-    function showSection(hash){
-      const id = hash.replace('#','') || 'home';
-      ['home','browse','requests','become-pro','bookings'].forEach(sec=>{
-        const el = document.getElementById(sec);
-        if(!el) return;
-        if (sec==='home') {
-          document.querySelector('header').style.display = '';
-        }
-        el.style.scrollMarginTop = '80px';
-      });
-      const target = document.getElementById(id);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    window.addEventListener('hashchange', ()=>showSection(location.hash));
-
-    // ------- Boot -------
-    function boot(){
-      initFilters();
-      renderProviders();
-      renderRequests();
-      renderBookings();
-      bindEvents();
-      document.getElementById('year').textContent = new Date().getFullYear();
-      showSection(location.hash || '#home');
-    }
-
-    document.addEventListener('DOMContentLoaded', boot);
- 
-    document.addEventListener('DOMContentLoaded', boot);
-  </script>
-
-  <!-- Notifications script (separate block, not nested) -->
-  <script>
-    // --- Notifications (upcoming bookings popover) ---
-    const notifyBtn   = document.getElementById('notify-btn-nav');
-    const notifyPanel = document.getElementById('notify-panel');
-    const notifyList  = document.getElementById('notify-list');
-    const notifyBadge = document.getElementById('notify-badge');
-
-    function getUpcomingBookings(days=14){
-      const today = new Date(); today.setHours(0,0,0,0);
-      const ahead = new Date(); ahead.setDate(today.getDate()+days); ahead.setHours(23,59,59,999);
-      return [...state.bookings]
-        .filter(b => b.status !== 'Cancelled' && b.date)
-        .map(b => ({...b, dateObj: new Date(b.date)}))
-        .filter(b => !isNaN(b.dateObj) && b.dateObj >= today && b.dateObj <= ahead)
-        .sort((a,b) => a.dateObj - b.dateObj);
-    }
-
-    function renderNotify(){
-      const items = getUpcomingBookings(14);
-      notifyList.innerHTML = items.length ? items.map(b=>{
-        const now = new Date();
-        const daysLeft = Math.max(0, Math.ceil((b.dateObj - now)/(1000*60*60*24)));
-        return `
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
-            <div class="flex items-center justify-between">
-              <div class="font-semibold text-slate-900">${b.providerName}</div>
-              <span class="text-xs px-2 py-1 rounded-full ${daysLeft<=1 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
-                in ${daysLeft} day${daysLeft!==1?'s':''}
-              </span>
-            </div>
-            <div class="text-sm text-slate-600 mt-1">${b.category} • ${b.date} • ${b.hours}h • LKR ${fmt(b.total)}</div>
-            <div class="mt-2 flex gap-3">
-              <button class="text-sm text-fix-700 hover:underline" data-rebook="${b.providerId}">View / Edit</button>
-            </div>
-          </div>
-        `;
-      }).join('') : `<div class="text-sm text-slate-600">No upcoming bookings in the next 14 days.</div>`;
-
-      notifyList.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click', ()=>{
-        openBookModal(btn.dataset.rebook);
-        hidePanel();
-      }));
-    }
-
-    function showPanel(){
-      renderNotify();
-      notifyPanel.classList.remove('hidden');
-      notifyBadge?.classList.add('hidden');
-    }
-
-    function hidePanel(){
-      notifyPanel.classList.add('hidden');
-    }
-
-    function togglePanel(){
-      if (notifyPanel.classList.contains('hidden')) showPanel();
-      else hidePanel();
-    }
-
-    function updateNotifyBadge(){
-      const n = getUpcomingBookings(14).length;
-      if (notifyBadge){
-        notifyBadge.textContent = n;
-        notifyBadge.classList.toggle('hidden', n===0);
+    // Confirm booking
+    $('#bk-confirm').onclick = () => {
+      const dateVal = $('#bk-date').value;
+      if (!dateVal) {
+        alert('Please select a date for your booking.');
+        return;
       }
+
+      const hours = Math.max(1, Number(hoursInput.value || 1));
+      const booking = {
+        id: 'b' + Date.now(),
+        providerId: p.id,
+        providerName: p.name,
+        category: p.category,
+        date: dateVal,
+        hours,
+        address: $('#bk-address').value,
+        notes: $('#bk-notes').value,
+        rate: p.rate,
+        total: p.rate * hours,
+        status: 'Confirmed'
+      };
+
+      state.bookings.unshift(booking);
+      db.save(state);
+      updateNotifyBadge();
+      closeModal();
+
+      const toast = document.createElement('div');
+      toast.textContent = '✅ Booking confirmed successfully!';
+      toast.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    };
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeModal() {
+    const modal = $('#modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  $('#modal-close').addEventListener('click', closeModal);
+
+  // ------- ACTIVATE BOOK BUTTONS -------
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-book]').forEach(btn => {
+      btn.addEventListener('click', () => openBookModal(btn.dataset.book));
+    });
+    updateNotifyBadge();
+  });
+
+  // ------- NOTIFY BADGE -------
+  function getUpcomingBookings(days = 14) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const ahead = new Date(); ahead.setDate(today.getDate() + days);
+    ahead.setHours(23, 59, 59, 999);
+    return (state.bookings || [])
+      .filter(b => b.status !== 'Cancelled' && b.date)
+      .map(b => ({ ...b, dateObj: new Date(b.date) }))
+      .filter(b => !isNaN(b.dateObj) && b.dateObj >= today && b.dateObj <= ahead);
+  }
+
+  function updateNotifyBadge() {
+    const n = getUpcomingBookings().length;
+    const badge = document.getElementById('notify-badge');
+    if (badge) {
+      badge.textContent = n;
+      badge.classList.toggle('hidden', n === 0);
     }
+  }
+
+
 
     notifyBtn?.addEventListener('click', (e)=>{
       e.stopPropagation();
