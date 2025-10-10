@@ -1038,37 +1038,87 @@ document.addEventListener("DOMContentLoaded", () => {
     list.map(l => `<option value="${l}">${l}</option>`).join("");
 });
 </script>
-<!-- Sign In Modal -->
-<div id="login-modal"
-     class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
-  <div class="bg-white max-w-sm w-full rounded-2xl shadow-soft overflow-hidden">
-    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-      <h3 class="font-bold text-lg">Sign in to Fix</h3>
-      <button id="login-close" class="p-2 hover:bg-slate-100 rounded-lg">✕</button>
-    </div>
-    <form id="login-form" class="p-6 space-y-4">
-      <div>
-        <label class="block text-sm font-medium mb-1">Your name</label>
-        <input id="login-name" required
-               class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"
-               placeholder="Jane Perera" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Email</label>
-        <input id="login-email" required type="email"
-               class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"
-               placeholder="jane@example.com" />
-      </div>
-      <div class="flex justify-end gap-3 mt-2">
-        <button type="button" id="login-cancel"
-                class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
-        <button class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">
-          Sign in
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+<script>
+(function () {
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginBtn    = document.getElementById("btn-login");
+    const loginModal  = document.getElementById("login-modal");
+    const loginForm   = document.getElementById("login-form");
+    const loginClose  = document.getElementById("login-close");
+    const loginCancel = document.getElementById("login-cancel");
+
+    function openLogin() {
+      if (!loginModal) return;
+      loginModal.classList.remove("hidden");
+      loginModal.classList.add("flex");
+    }
+    function closeLogin() {
+      if (!loginModal) return;
+      loginModal.classList.add("hidden");
+      loginModal.classList.remove("flex");
+      loginForm?.reset();
+    }
+    function updateNavbar() {
+      let user = null;
+      try { user = JSON.parse(localStorage.getItem("fix-user")) || null; } catch {}
+      if (!loginBtn) return user;
+
+      if (user && user.name) {
+        loginBtn.textContent = `Hi, ${user.name.split(" ")[0]}!`;
+        loginBtn.classList.remove("bg-white","text-fix-700");
+        loginBtn.classList.add("bg-fix-600","text-white","cursor-default");
+        loginBtn.disabled = true;
+      } else {
+        loginBtn.textContent = "Sign in";
+        loginBtn.classList.remove("bg-fix-600","text-white","cursor-default");
+        loginBtn.classList.add("bg-white","text-fix-700");
+        loginBtn.disabled = false;
+      }
+      return user;
+    }
+    function toast(msg) {
+      const el = document.createElement("div");
+      el.textContent = msg;
+      el.className = "fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2000);
+    }
+
+    // Init navbar state
+    let user = updateNavbar();
+
+    // Open modal only if not signed in
+    loginBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      user = updateNavbar();
+      if (!user) openLogin();
+    });
+
+    // Close handlers
+    loginClose?.addEventListener("click", closeLogin);
+    loginCancel?.addEventListener("click", closeLogin);
+    loginModal?.addEventListener("click", (e) => {
+      if (e.target === loginModal) closeLogin(); // click outside to close
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLogin();
+    });
+
+    // Submit handler
+    loginForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name  = document.getElementById("login-name")?.value.trim();
+      const email = document.getElementById("login-email")?.value.trim();
+      if (!name || !email) return;
+      localStorage.setItem("fix-user", JSON.stringify({ name, email }));
+      closeLogin();
+      updateNavbar();
+      toast(`✅ Welcome, ${name}!`);
+    });
+  });
+})();
+</script>
+
 
 
 </body>
