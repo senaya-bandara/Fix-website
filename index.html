@@ -674,12 +674,12 @@ document.getElementById('notify-btn-nav')?.addEventListener('click', () => {
 
 
   </script>
-  <script>
-// --- Show sample notifications if no real bookings exist ---
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   const notifyList = document.getElementById("notify-list");
   const notifyBtn = document.getElementById("notify-btn-nav");
   const notifyPanel = document.getElementById("notify-panel");
+  const notifyClose = document.getElementById("notify-close");
 
   function showSampleNotifications() {
     const upcoming = getUpcomingBookings?.(14) || [];
@@ -710,12 +710,29 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  notifyBtn?.addEventListener("click", () => {
+  // Show/hide panel on bell click
+  notifyBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
     showSampleNotifications();
     notifyPanel.classList.toggle("hidden");
   });
+
+  // ✅ Close button now works properly
+  notifyClose?.addEventListener("click", (e) => {
+    e.preventDefault();
+    notifyPanel.classList.add("hidden");
+  });
+
+  // Optional: click outside to close
+  document.addEventListener("click", (e) => {
+    const wrap = document.getElementById("notify-wrapper");
+    if (wrap && !wrap.contains(e.target)) {
+      notifyPanel.classList.add("hidden");
+    }
+  });
 });
 </script>
+
 
 </body>
 </html>
