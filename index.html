@@ -14,12 +14,26 @@
     .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,.7); }
     .clip-blob { clip-path: path('M40 0C68 0 90 18 100 45c10 27 5 54-12 72S47 139 25 130 0 98 0 70 12 0 40 0z'); }
     /* Replace your existing #notify-btn rule with this */
+/* In your <style> block, replace the existing #notify-btn rule with this */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
 #notify-btn{
   position: fixed !important;
-  top: calc(env(safe-area-inset-top, 0px) + 16px);
-  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  top: calc(var(--safe-top) + 32px);   /* move down from top */
+  right: calc(var(--safe-right) + 32px); /* move left from right edge */
   z-index: 99999;
 }
+
+@media (max-width: 640px){
+  #notify-btn{
+    top: calc(var(--safe-top) + 20px);
+    right: calc(var(--safe-right) + 20px);
+  }
+}
+
 
 
   </style>
