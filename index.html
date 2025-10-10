@@ -900,6 +900,28 @@ document.getElementById("clear-browse").addEventListener("click", () => {
   document.getElementById("q-date").value = "";
 });
 </script>
+<script>
+// ------- POPULATE CATEGORY & LOCATION DROPDOWNS IN "BECOME A PRO" -------
+
+document.addEventListener("DOMContentLoaded", () => {
+  const catSelect = document.getElementById("pro-category");
+  const locSelect = document.getElementById("pro-location");
+
+  if (!catSelect || !locSelect) return;
+
+  // Get unique categories and locations from the provider list
+  const categories = [...new Set(state.providers.map(p => p.category))].sort();
+  const locations = [...new Set(state.providers.map(p => p.location))].sort();
+
+  // Fill category dropdown
+  catSelect.innerHTML = `<option value="">Select category</option>` + 
+    categories.map(c => `<option value="${c}">${c}</option>`).join("");
+
+  // Fill location dropdown
+  locSelect.innerHTML = `<option value="">Select location</option>` + 
+    locations.map(l => `<option value="${l}">${l}</option>`).join("");
+});
+</script>
 
 
 </body>
