@@ -659,10 +659,13 @@ function renderProviders(){
 
     // ------- Book modal -------
 
-function openBookModal(pid){
-  const p = state.providers.find(x=>x.id===pid);
-  if(!p) return;
+function openBookModal(pid) {
+  const p = state.providers.find(x => x.id === pid);
+  if (!p) return;
+
   const body = document.getElementById('modal-body');
+  const modal = document.getElementById('modal');
+
   body.innerHTML = `
     <div class="space-y-1">
       <div class="text-sm text-slate-600">Provider</div>
@@ -688,41 +691,67 @@ function openBookModal(pid){
     </div>
     <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
       <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
-      <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate*3)}</div>
+      <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate * 3)}</div>
     </div>
     <div class="flex justify-end gap-3">
       <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
       <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
-    </div>`;
+    </div>
+  `;
 
-  const hours = document.getElementById('bk-hours');
-  const total = ()=> document.getElementById('bk-total').textContent = 'Total: LKR ' + fmt(p.rate * Math.max(1, Number(hours.value||1)));
-  hours.addEventListener('input', total);
+  // Update total dynamically
+  const hoursInput = document.getElementById('bk-hours');
+  const totalEl = document.getElementById('bk-total');
+  hoursInput.addEventListener('input', () => {
+    const hours = Math.max(1, Number(hoursInput.value || 1));
+    totalEl.textContent = `Total: LKR ${fmt(p.rate * hours)}`;
+  });
 
+  // Cancel closes modal
   document.getElementById('bk-cancel').onclick = closeModal;
-  document.getElementById('bk-confirm').onclick = ()=>{
-    const b = {
-      id: 'b'+Date.now(), providerId: p.id, providerName: p.name, category: p.category,
-      date: document.getElementById('bk-date').value, hours: Number(document.getElementById('bk-hours').value||1),
-      address: document.getElementById('bk-address').value, notes: document.getElementById('bk-notes').value, rate: p.rate,
-      total: p.rate * Math.max(1, Number(document.getElementById('bk-hours').value||1)),
+
+  // Confirm booking handler
+  document.getElementById('bk-confirm').onclick = () => {
+    const dateVal = document.getElementById('bk-date').value;
+    if (!dateVal) {
+      alert('Please select a date for your booking.');
+      return;
+    }
+
+    const hours = Math.max(1, Number(hoursInput.value || 1));
+    const booking = {
+      id: 'b' + Date.now(),
+      providerId: p.id,
+      providerName: p.name,
+      category: p.category,
+      date: dateVal,
+      hours,
+      address: document.getElementById('bk-address').value,
+      notes: document.getElementById('bk-notes').value,
+      rate: p.rate,
+      total: p.rate * hours,
       status: 'Confirmed'
     };
-    state.bookings.unshift(b); db.save(state); renderBookings(); closeModal();
-    updateNotifyBadge(); // ⬅️ update notifications
-    alert('Booking confirmed! (simulated)');
-  }
 
-  document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('modal').classList.add('flex');
+    state.bookings.unshift(booking);
+    db.save(state);
+    renderBookings();
+    updateNotifyBadge();
+    closeModal();
+
+    alert('✅ Booking confirmed!');
+  };
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
 }
 
+function closeModal() {
+  const modal = document.getElementById('modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
 
-
-    function closeModal(){
-      document.getElementById('modal').classList.add('hidden');
-      document.getElementById('modal').classList.remove('flex');
-    }
 
     document.getElementById('modal-close').addEventListener('click', closeModal);
 
