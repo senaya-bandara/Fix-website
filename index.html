@@ -741,6 +741,8 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
   <script>
 // --- Core utility: Close modal ---
+<script>
+// --- Core utility: Close modal ---
 function closeModal() {
   const modal = document.getElementById("modal");
   if (modal) {
@@ -748,7 +750,7 @@ function closeModal() {
     modal.classList.remove("flex");
   }
 }
-<script>
+
 // --- Render all confirmed bookings in "My Bookings" ---
 function renderBookings() {
   const list = document.getElementById("bookings-list");
@@ -780,10 +782,10 @@ function renderBookings() {
 }
 
 // --- Initial load ---
-document.addEventListener("DOMContentLoaded", () => {
-  renderBookings();
-});
+document.addEventListener("DOMContentLoaded", renderBookings);
 </script>
+
+
 
   <script>
 // Smooth-scroll navigation for top menu links
