@@ -13,13 +13,14 @@
     html, body { height:100%; }
     .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,.7); }
     .clip-blob { clip-path: path('M40 0C68 0 90 18 100 45c10 27 5 54-12 72S47 139 25 130 0 98 0 70 12 0 40 0z'); }
-    #notify-btn {
+    /* Replace your existing #notify-btn rule with this */
+#notify-btn{
   position: fixed !important;
-  top: 0;
-  right: 0;
-  margin: 12px;         /* adjust if needed */
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
   z-index: 99999;
 }
+
 
   </style>
   <script>
@@ -44,8 +45,8 @@
   
 </head>
 <body class="text-slate-800">
-  <button id="notify-btn"
-  style="position:fixed; top:0; right:0; margin:12px; z-index:99999;"
+  <!-- Use ONE button (remove other duplicates), no inline style needed -->
+<button id="notify-btn"
   class="rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
   aria-label="Notifications">
   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
@@ -53,6 +54,7 @@
   </svg>
   <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
 </button>
+
 
   <!-- Full-page background gradient -->
   <div class="fixed inset-0 -z-50">
