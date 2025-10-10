@@ -674,5 +674,48 @@ document.getElementById('notify-btn-nav')?.addEventListener('click', () => {
 
 
   </script>
+  <script>
+// --- Show sample notifications if no real bookings exist ---
+document.addEventListener("DOMContentLoaded", () => {
+  const notifyList = document.getElementById("notify-list");
+  const notifyBtn = document.getElementById("notify-btn-nav");
+  const notifyPanel = document.getElementById("notify-panel");
+
+  function showSampleNotifications() {
+    const upcoming = getUpcomingBookings?.(14) || [];
+    if (upcoming.length > 0) return; // real data exists already
+
+    notifyList.innerHTML = `
+      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold text-slate-900">Nimali Jayasinghe</div>
+          <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 2 days</span>
+        </div>
+        <div class="text-sm text-slate-600 mt-1">Elder care • 2025-10-13 • 3h • LKR 7,500</div>
+      </div>
+      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold text-slate-900">Ravi Kannan</div>
+          <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 5 days</span>
+        </div>
+        <div class="text-sm text-slate-600 mt-1">Driving • 2025-10-16 • 4h • LKR 7,200</div>
+      </div>
+      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold text-slate-900">Ishara Perera</div>
+          <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">in 9 days</span>
+        </div>
+        <div class="text-sm text-slate-600 mt-1">Cleaning • 2025-10-20 • 2h • LKR 2,400</div>
+      </div>
+    `;
+  }
+
+  notifyBtn?.addEventListener("click", () => {
+    showSampleNotifications();
+    notifyPanel.classList.toggle("hidden");
+  });
+});
+</script>
+
 </body>
 </html>
