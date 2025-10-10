@@ -17,13 +17,10 @@
           colors: {
             fix: {
               50:'#ecfbf3',100:'#d3f6e3',200:'#a8ecc8',300:'#7de1ae',400:'#61d999',
-              500:'#4EC67E',  /* primary */
-              600:'#3fb870',700:'#2fa861',800:'#238a4f',900:'#1b6d3f'
+              500:'#4EC67E',600:'#3fb870',700:'#2fa861',800:'#238a4f',900:'#1b6d3f'
             }
           },
-          boxShadow: {
-            soft: '0 10px 30px rgba(0,0,0,0.08)'
-          }
+          boxShadow: { soft: '0 10px 30px rgba(0,0,0,0.08)' }
         }
       }
     }
@@ -56,7 +53,6 @@
         <a href="#home" class="text-white text-2xl font-extrabold tracking-tight">Fix</a>
       </div>
 
-      <!-- Separated menu -->
       <div class="hidden md:flex items-center text-white/90 font-medium divide-x divide-white/25">
         <a href="#browse" class="px-3 hover:text-white">Browse</a>
         <a href="#requests" class="px-3 hover:text-white">Requests</a>
@@ -64,17 +60,50 @@
         <a href="#bookings" class="px-3 hover:text-white">My Bookings</a>
       </div>
 
-      <!-- Right side: Sign in + Bell + Post -->
+      <!-- Right side: Sign in + Bell + Post (bell has a pop-up dropdown) -->
       <div class="flex items-center gap-3">
         <button id="btn-login" class="hidden md:inline-flex px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">Sign in</button>
 
-        <!-- Bell next to Sign in -->
-        <button id="notify-btn-nav" class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative" aria-label="Notifications">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
-          </svg>
-          <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
-        </button>
+        <!-- Bell + Popover -->
+        <div class="relative">
+          <button id="notify-btn-nav" aria-expanded="false"
+            class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
+            aria-label="Notifications">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+            </svg>
+            <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
+          </button>
+
+          <!-- Popover panel -->
+          <div id="notify-popover"
+               class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+              <div class="font-semibold text-slate-900">Notifications</div>
+              <button id="mark-read" class="text-xs text-fix-700 hover:underline">Mark all read</button>
+            </div>
+            <ul class="max-h-80 overflow-auto divide-y divide-slate-100">
+              <li class="p-4 hover:bg-slate-50">
+                <div class="text-sm font-medium text-slate-900">Booking confirmed</div>
+                <div class="text-sm text-slate-600">Nimali Jayasinghe accepted your request for 12 Oct.</div>
+                <div class="text-xs text-slate-400 mt-1">2m ago</div>
+              </li>
+              <li class="p-4 hover:bg-slate-50">
+                <div class="text-sm font-medium text-slate-900">New offer on your request</div>
+                <div class="text-sm text-slate-600">Kasun Madushanka offered Cleaning — LKR 1200/hr.</div>
+                <div class="text-xs text-slate-400 mt-1">1h ago</div>
+              </li>
+              <li class="p-4 hover:bg-slate-50">
+                <div class="text-sm font-medium text-slate-900">Reminder</div>
+                <div class="text-sm text-slate-600">Physiotherapy session with Naveen tomorrow 10:00.</div>
+                <div class="text-xs text-slate-400 mt-1">Yesterday</div>
+              </li>
+            </ul>
+            <div class="p-3 border-t border-slate-200 text-center">
+              <a href="#bookings" class="text-fix-700 text-sm hover:underline">View all activity →</a>
+            </div>
+          </div>
+        </div>
 
         <button id="btn-post" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold shadow-soft hover:bg-fix-700">Post a Request</button>
       </div>
@@ -299,75 +328,72 @@
   </div>
 
   <script>
-    // ------- Data layer (localStorage simulation) -------
-    
-  // ---------- Data ----------
-  const seedProviders = [
-    { id: 'p1', name: 'Nimali Jayasinghe', category: 'Elder care', location: 'Colombo', rate: 2500, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Compassionate caregiver with 6+ years hospital experience. First aid certified.' },
-    { id: 'p2', name: 'Ravi Kannan', category: 'Driving', location: 'Kandy', rate: 1800, rating: 4.6, verified: false, languages: 'Tamil, Sinhala', bio: 'Professional driver with clean record. Airport pickups, day hires.' },
-    { id: 'p3', name: 'Ishara Perera', category: 'Cleaning', location: 'Colombo', rate: 1200, rating: 4.7, verified: true, languages: 'Sinhala', bio: 'Deep cleaning specialist.' },
-    { id: 'p4', name: 'Thushara Ranathunga', category: 'Cooking', location: 'Gampaha', rate: 1500, rating: 4.5, verified: true, languages: 'Sinhala', bio: 'Home-cooked Sri Lankan meals; vegetarian options.' },
-    { id: 'p5', name: 'Naveen Nadarajah', category: 'Physiotherapy', location: 'Jaffna', rate: 3000, rating: 4.8, verified: true, languages: 'Tamil, English', bio: 'Licensed physio for post-op recovery and mobility.' },
-    { id: 'p6', name: 'Dilini Fernando', category: 'Babysitting', location: 'Colombo', rate: 2200, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Early childhood trained nanny. CPR certified.' },
-    { id: 'p7', name: 'Sunethra Silva', category: 'Elder care', location: 'Galle', rate: 2000, rating: 4.4, verified: false, languages: 'Sinhala', bio: 'Patient and reliable elder companion.' },
-    { id: 'p8', name: 'Ahamed Rizvi', category: 'Event staff', location: 'Matara', rate: 1700, rating: 4.3, verified: true, languages: 'Sinhala, English', bio: 'Event waiter and setup crew.' }
-  ];
-  const CATEGORIES = ['Elder care','Babysitting','Cleaning','Cooking','Driving','Event staff','Physiotherapy','Errands'];
-  const LOCATIONS  = ['Colombo','Gampaha','Kandy','Galle','Matara','Jaffna','Negombo','Kalutara'];
+    const seedProviders = [
+      { id: 'p1', name: 'Nimali Jayasinghe', category: 'Elder care', location: 'Colombo', rate: 2500, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Compassionate caregiver with 6+ years hospital experience. First aid certified.' },
+      { id: 'p2', name: 'Ravi Kannan', category: 'Driving', location: 'Kandy', rate: 1800, rating: 4.6, verified: false, languages: 'Tamil, Sinhala', bio: 'Professional driver with clean record. Airport pickups, day hires.' },
+      { id: 'p3', name: 'Ishara Perera', category: 'Cleaning', location: 'Colombo', rate: 1200, rating: 4.7, verified: true, languages: 'Sinhala', bio: 'Deep cleaning specialist for apartments and offices.' },
+      { id: 'p4', name: 'Thushara Ranathunga', category: 'Cooking', location: 'Gampaha', rate: 1500, rating: 4.5, verified: true, languages: 'Sinhala', bio: 'Home-cooked Sri Lankan meals; vegetarian options available.' },
+      { id: 'p5', name: 'Naveen Nadarajah', category: 'Physiotherapy', location: 'Jaffna', rate: 3000, rating: 4.8, verified: true, languages: 'Tamil, English', bio: 'Licensed physio for post-op recovery and mobility.' },
+      { id: 'p6', name: 'Dilini Fernando', category: 'Babysitting', location: 'Colombo', rate: 2200, rating: 4.9, verified: true, languages: 'Sinhala, English', bio: 'Early childhood trained nanny. CPR certified.' },
+      { id: 'p7', name: 'Sunethra Silva', category: 'Elder care', location: 'Galle', rate: 2000, rating: 4.4, verified: false, languages: 'Sinhala', bio: 'Patient and reliable elder companion for day duties.' },
+      { id: 'p8', name: 'Ahamed Rizvi', category: 'Event staff', location: 'Matara', rate: 1700, rating: 4.3, verified: true, languages: 'Sinhala, English', bio: 'Event waiter and setup crew for weddings and parties.' }
+    ];
+    const CATEGORIES = ['Elder care','Babysitting','Cleaning','Cooking','Driving','Event staff','Physiotherapy','Errands'];
+    const LOCATIONS  = ['Colombo','Gampaha','Kandy','Galle','Matara','Jaffna','Negombo','Kalutara'];
 
-  const db = {
-    load() {
-      const data = JSON.parse(localStorage.getItem('fix-db') || '{}');
-      if (!data.providers) data.providers = seedProviders;
-      if (!data.requests)  data.requests  = [];
-      if (!data.bookings)  data.bookings  = [];
-      localStorage.setItem('fix-db', JSON.stringify(data));
-      return data;
-    },
-    save(d){ localStorage.setItem('fix-db', JSON.stringify(d)); }
-  };
-  let state = db.load();
+    const db = {
+      load() {
+        const data = JSON.parse(localStorage.getItem('fix-db') || '{}');
+        if (!data.providers) data.providers = seedProviders;
+        if (!data.requests)  data.requests  = [];
+        if (!data.bookings)  data.bookings  = [];
+        localStorage.setItem('fix-db', JSON.stringify(data));
+        return data;
+      },
+      save(data){ localStorage.setItem('fix-db', JSON.stringify(data)); }
+    }
+    let state = db.load();
 
-  // ---------- Helpers ----------
-  const $  = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-  const fmt = n => new Intl.NumberFormat('en-LK').format(n);
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+    const fmt = n => new Intl.NumberFormat('en-LK').format(n);
 
-  function badge(text, tone='emerald'){
-    return `<span class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-${tone}-50 text-${tone}-700 border border-${tone}-200">${text}</span>`
-  }
-  function starRating(r){
-    const f = Math.floor(r); const half = r - f >= .5; const empty = 5 - f - (half ? 1 : 0);
-    return '<div class="flex items-center gap-0.5">'
-      + '★'.repeat(f) + (half ? '☆' : '') + '✩'.repeat(empty)
-      + `<span class="ml-1 text-sm text-slate-600">${r.toFixed(1)}</span></div>`;
-  }
+    function badge(text, tone='emerald'){
+      return `<span class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-${tone}-50 text-${tone}-700 border border-${tone}-200">${text}</span>`
+    }
+    function starRating(r){
+      const full = Math.floor(r); const half = r - full >= .5; const empty = 5 - full - (half ? 1 : 0);
+      return '<div class="flex items-center gap-0.5">'
+        + '★'.repeat(full)
+        + (half ? '☆' : '')
+        + '✩'.repeat(empty)
+        + `<span class="ml-1 text-sm text-slate-600">${r.toFixed(1)}</span>`
+        + '</div>'
+    }
 
-  // ---------- UI Renders ----------
-  function initFilters(){
-    const catSel = $('#filter-category');
-    const locSel = $('#filter-location');
-    const proCat = $('#pro-category');
-    const proLoc = $('#pro-location');
-    const reqLoc = $('#req-location');
+    function initFilters(){
+      const catSel = $('#filter-category');
+      const locSel = $('#filter-location');
+      const proCat = $('#pro-category');
+      const proLoc = $('#pro-location');
+      const reqLoc = $('#req-location');
 
-    CATEGORIES.forEach(c=>{
-      [catSel, proCat].forEach(s=>{ if(!s) return; const o=document.createElement('option'); o.value=o.textContent=c; s.appendChild(o); });
-    });
-    LOCATIONS.forEach(l=>{
-      [locSel, proLoc, reqLoc].forEach(s=>{ if(!s) return; const o=document.createElement('option'); o.value=o.textContent=l; s.appendChild(o); });
-    });
+      CATEGORIES.forEach(c=>{
+        [catSel, proCat].forEach(s=>{ const o=document.createElement('option'); o.value=o.textContent=c; s.appendChild(o); });
+      });
+      LOCATIONS.forEach(l=>{
+        [locSel, proLoc, reqLoc].forEach(s=>{ const o=document.createElement('option'); o.value=o.textContent=l; s.appendChild(o); });
+      });
 
-    // Trending sample names UI
-    const trending = $('#trending');
-    if (trending) {
+      const trending = $('#trending');
       const data = {
         'Elder care': ['Nimali Jayasinghe','Sunethra Silva','Anoma de Silva'],
         'Cleaning': ['Ishara Perera','Kasun Madushanka','Tharushi Senanayake'],
         'Babysitting': ['Dilini Fernando','Menaka Peiris','Ruwani Hettiarachchi'],
         'Driving': ['Ravi Kannan','Saman Kumara','Tharaka Jayasuriya']
       };
-      trending.innerHTML = Object.keys(data).map(c=>{
+      const topCats = Object.keys(data);
+      trending.innerHTML = topCats.map(c=>{
         const names = data[c];
         return `
           <li class="p-4 rounded-xl border border-slate-200 hover:shadow-soft transition bg-white">
@@ -377,179 +403,167 @@
               ${names.map(n=>`<li class="px-2 py-1 rounded-lg bg-slate-50 border border-slate-200">${n}</li>`).join('')}
             </ul>
             <a href="#browse" data-cat="${c}" class="mt-3 inline-flex text-fix-600 hover:underline">Explore →</a>
-          </li>`;
+          </li>
+        `;
       }).join('');
+
       trending.querySelectorAll('a[data-cat]').forEach(a=>a.addEventListener('click', e=>{
         e.preventDefault();
-        if ($('#filter-category')) { $('#filter-category').value = a.dataset.cat; renderProviders(); }
-        location.hash = '#browse';
+        catSel.value = a.dataset.cat; renderProviders(); location.hash = '#browse';
       }));
     }
-  }
 
-  function renderProviders(){
-    const grid = $('#providers-grid'); if(!grid) return;
-    let items = [...state.providers];
-    const cat = $('#filter-category')?.value || '';
-    const loc = $('#filter-location')?.value || '';
-    const sort= $('#sort-by')?.value || 'top';
+    function renderProviders(){
+      const grid = $('#providers-grid');
+      let items = [...state.providers];
+      const cat = $('#filter-category').value;
+      const loc = $('#filter-location').value;
+      const sort= $('#sort-by').value;
 
-    if (cat) items = items.filter(p=>p.category===cat);
-    if (loc) items = items.filter(p=>p.location===loc);
-    if (sort==='top') items.sort((a,b)=>b.rating-a.rating);
-    if (sort==='price-asc') items.sort((a,b)=>a.rate-b.rate);
-    if (sort==='price-desc') items.sort((a,b)=>b.rate-a.rate);
+      if (cat) items = items.filter(p=>p.category===cat);
+      if (loc) items = items.filter(p=>p.location===loc);
+      if (sort==='top') items.sort((a,b)=>b.rating-a.rating);
+      if (sort==='price-asc') items.sort((a,b)=>a.rate-b.rate);
+      if (sort==='price-desc') items.sort((a,b)=>b.rate-a.rate);
 
-    grid.innerHTML = items.map(p=>`
-      <article class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
-        <div class="flex items-start justify-between gap-3">
+      const html = items.map(p=>`
+        <article class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h3 class="text-lg font-bold">${p.name}</h3>
+              <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
+              <div class="mt-2 flex items-center gap-2">${starRating(p.rating)} ${p.verified?badge('Verified','fix'):''}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
+              <div class="text-sm text-slate-600">per hour</div>
+            </div>
+          </div>
+          <p class="mt-3 text-slate-700">${p.bio}</p>
+          <div class="mt-3 text-sm text-slate-600">Languages: ${p.languages||'—'}</div>
+          <div class="mt-4 flex gap-2">
+            <button class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600" data-book="${p.id}">Book</button>
+            <button class="px-4 py-2 rounded-xl bg-slate-100" data-contact="${p.id}">Contact</button>
+          </div>
+        </article>
+      `).join('');
+
+      grid.innerHTML = html || `<div class="col-span-full text-[#E6FFF1]">No providers match your filters.</div>`;
+    }
+
+    function renderRequests(){
+      const list = $('#requests-list');
+      list.innerHTML = state.requests.map((r,i)=>`
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold">${r.title}</h3>
+            ${badge(r.location,'fix')}
+          </div>
+          <div class="mt-1 text-slate-600 text-sm">Needed on ${r.date}</div>
+          <p class="mt-2">${r.details||''}</p>
+          <div class="mt-3 font-semibold">Budget: LKR ${fmt(r.budget)}</div>
+          <div class="mt-4 flex gap-2">
+            <button class="px-4 py-2 rounded-xl bg-emerald-400 text-slate-900 font-semibold" data-offer="${i}">Offer service</button>
+            <button class="px-4 py-2 rounded-xl bg-slate-100" data-contactreq="${i}">Contact</button>
+          </div>
+        </div>
+      `).join('') || `<div class="text-[#E6FFF1]">No requests yet. Be the first to post!</div>`;
+
+      list.querySelectorAll('[data-offer]').forEach(btn=>btn.addEventListener('click',()=>alert('Offer sent (simulated).')));
+      list.querySelectorAll('[data-contactreq]').forEach(btn=>btn.addEventListener('click',()=>alert('Contact shared (simulated).')));
+    }
+
+    function openBookModal(pid){
+      const p = state.providers.find(x=>x.id===pid);
+      if(!p) return;
+      const body = $('#modal-body');
+      body.innerHTML = `
+        <div class="space-y-1">
+          <div class="text-sm text-slate-600">Provider</div>
+          <div class="font-bold text-lg">${p.name} — ${p.category}</div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
           <div>
-            <h3 class="text-lg font-bold">${p.name}</h3>
-            <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
-            <div class="mt-2 flex items-center gap-2">${starRating(p.rating)} ${p.verified?badge('Verified','fix'):''}</div>
+            <label class="block text-sm font-medium mb-1">Date</label>
+            <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
           </div>
-          <div class="text-right">
-            <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
-            <div class="text-sm text-slate-600">per hour</div>
-          </div>
-        </div>
-        <p class="mt-3 text-slate-700">${p.bio}</p>
-        <div class="mt-3 text-sm text-slate-600">Languages: ${p.languages||'—'}</div>
-        <div class="mt-4 flex gap-2">
-          <button type="button" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600" data-book="${p.id}">Book</button>
-          <button type="button" class="px-4 py-2 rounded-xl bg-slate-100" data-contact="${p.id}">Contact</button>
-        </div>
-      </article>
-    `).join('') || `<div class="col-span-full text-[#E6FFF1]">No providers match your filters.</div>`;
-  }
-
-  function renderRequests(){
-    const list = $('#requests-list'); if(!list) return;
-    list.innerHTML = state.requests.map((r,i)=>`
-      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
-        <div class="flex items-center justify-between">
-          <h3 class="font-bold">${r.title}</h3>
-          ${badge(r.location,'fix')}
-        </div>
-        <div class="mt-1 text-slate-600 text-sm">Needed on ${r.date}</div>
-        <p class="mt-2">${r.details||''}</p>
-        <div class="mt-3 font-semibold">Budget: LKR ${fmt(r.budget)}</div>
-        <div class="mt-4 flex gap-2">
-          <button type="button" class="px-4 py-2 rounded-xl bg-emerald-400 text-slate-900 font-semibold" data-offer="${i}">Offer service</button>
-          <button type="button" class="px-4 py-2 rounded-xl bg-slate-100" data-contactreq="${i}">Contact</button>
-        </div>
-      </div>
-    `).join('') || `<div class="text-[#E6FFF1]">No requests yet. Be the first to post!</div>`;
-  }
-
-  // ---------- Booking Modal ----------
-  function openBookModal(pid){
-    const p = state.providers.find(x=>x.id===pid); if(!p) return;
-    const body = $('#modal-body'); if(!body) return;
-    body.innerHTML = `
-      <div class="space-y-1">
-        <div class="text-sm text-slate-600">Provider</div>
-        <div class="font-bold text-lg">${p.name} — ${p.category}</div>
-      </div>
-      <div class="grid md:grid-cols-2 gap-3">
-        <div>
-          <label class="block text-sm font-medium mb-1">Date</label>
-          <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Hours</label>
-          <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
-        </div>
-      </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Address</label>
-        <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Notes</label>
-        <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
-      </div>
-      <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
-        <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
-        <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate*3)}</div>
-      </div>
-      <div class="flex justify-end gap-3">
-        <button type="button" id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
-        <button type="button" id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
-      </div>`;
-    const hours = $('#bk-hours');
-    const totalEl = $('#bk-total');
-    const updateTotal = ()=> totalEl.textContent = 'Total: LKR ' + fmt(p.rate * Math.max(1, Number(hours.value||1)));
-    hours.addEventListener('input', updateTotal);
-
-    $('#bk-cancel').onclick = closeModal;
-    $('#bk-confirm').onclick = ()=>{
-      const b = {
-        id: 'b'+Date.now(), providerId: p.id, providerName: p.name, category: p.category,
-        date: $('#bk-date').value, hours: Number($('#bk-hours').value||1),
-        address: $('#bk-address').value, notes: $('#bk-notes').value, rate: p.rate,
-        total: p.rate * Math.max(1, Number($('#bk-hours').value||1)),
-        status: 'Confirmed'
-      };
-      state.bookings.unshift(b); db.save(state); renderBookings(); closeModal();
-      alert('Booking confirmed! (simulated)');
-    };
-
-    const modal = $('#modal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-  }
-  function closeModal(){
-    const modal = $('#modal'); if(!modal) return;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-
-  function renderBookings(){
-    const list = $('#bookings-list'); if(!list) return;
-    list.innerHTML = state.bookings.map(b=>`
-      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
-        <div class="flex items-center justify-between">
           <div>
-            <div class="font-bold">${b.providerName}</div>
-            <div class="text-slate-600 text-sm">${b.category} • ${b.date} • ${b.hours}h</div>
-          </div>
-          <div class="text-right">
-            <div class="font-extrabold">LKR ${fmt(b.total)}</div>
-            ${badge(b.status, b.status==='Confirmed'?'emerald':'slate')}
+            <label class="block text-sm font-medium mb-1">Hours</label>
+            <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
           </div>
         </div>
-        <div class="mt-3 text-sm text-slate-700">${b.address}</div>
-        <div class="mt-4 flex gap-2">
-          <button type="button" class="px-4 py-2 rounded-xl bg-slate-100" data-cancel="${b.id}">Cancel</button>
-          <button type="button" class="px-4 py-2 rounded-xl bg-fix-500 text-white" data-rebook="${b.providerId}">Rebook</button>
+        <div>
+          <label class="block text-sm font-medium mb-1">Address</label>
+          <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
         </div>
-      </div>
-    `).join('') || `<div class="text-slate-600">No bookings yet.</div>`;
+        <div>
+          <label class="block text-sm font-medium mb-1">Notes</label>
+          <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
+        </div>
+        <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+          <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
+          <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate*3)}</div>
+        </div>
+        <div class="flex justify-end gap-3">
+          <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+          <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
+        </div>`;
 
-    list.querySelectorAll('[data-cancel]').forEach(btn=>btn.addEventListener('click',()=>{
-      const id = btn.dataset.cancel;
-      const bk = state.bookings.find(x=>x.id===id); if(!bk) return;
-      bk.status = 'Cancelled'; db.save(state); renderBookings();
-    }));
-    list.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.rebook)));
-  }
+      const hours = $('#bk-hours');
+      const total = ()=> $('#bk-total').textContent = 'Total: LKR ' + fmt(p.rate * Math.max(1, Number(hours.value||1)));
+      hours.addEventListener('input', total);
 
-  // ---------- Events (robust) ----------
-  function bindEvents(){
-    // Search submit
-    const searchForm = $('#search-form');
-    if (searchForm) {
-      searchForm.addEventListener('submit', e=>{
+      $('#modal').classList.remove('hidden');
+      $('#modal').classList.add('flex');
+    }
+    function closeModal(){ $('#modal').classList.add('hidden'); $('#modal').classList.remove('flex'); }
+    $('#modal-close').addEventListener('click', closeModal);
+
+    function renderBookings(){
+      const list = $('#bookings-list');
+      list.innerHTML = state.bookings.map(b=>`
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-bold">${b.providerName}</div>
+              <div class="text-slate-600 text-sm">${b.category} • ${b.date} • ${b.hours}h</div>
+            </div>
+            <div class="text-right">
+              <div class="font-extrabold">LKR ${fmt(b.total)}</div>
+              ${badge(b.status, b.status==='Confirmed'?'emerald':'slate')}
+            </div>
+          </div>
+          <div class="mt-3 text-sm text-slate-700">${b.address}</div>
+          <div class="mt-4 flex gap-2">
+            <button class="px-4 py-2 rounded-xl bg-slate-100" data-cancel="${b.id}">Cancel</button>
+            <button class="px-4 py-2 rounded-xl bg-fix-500 text-white" data-rebook="${b.providerId}">Rebook</button>
+          </div>
+        </div>
+      `).join('') || `<div class="text-slate-600">No bookings yet.</div>`;
+
+      list.querySelectorAll('[data-cancel]').forEach(btn=>btn.addEventListener('click',()=>{
+        const id = btn.dataset.cancel;
+        const bk = state.bookings.find(x=>x.id===id); if(!bk) return;
+        bk.status = 'Cancelled'; db.save(state); renderBookings();
+      }));
+      list.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.rebook)));
+    }
+
+    function openPostModal(){ $('#post-modal').classList.remove('hidden'); $('#post-modal').classList.add('flex'); }
+    function closePostModal(){ $('#post-modal').classList.add('hidden'); $('#post-modal').classList.remove('flex'); }
+    $('#post-close').addEventListener('click', closePostModal);
+    $('#req-cancel').addEventListener('click', e=>{ e.preventDefault(); closePostModal(); });
+
+    function bindEvents(){
+      $('#search-form').addEventListener('submit', e=>{
         e.preventDefault();
-        const qS = $('#q-service')?.value.toLowerCase() || '';
-        const qL = $('#q-location')?.value.toLowerCase() || '';
-        const items = state.providers.filter(p =>
-          (!qS || p.category.toLowerCase().includes(qS) || p.name.toLowerCase().includes(qS))
-          && (!qL || p.location.toLowerCase().includes(qL))
-        );
+        const qS = $('#q-service').value.toLowerCase();
+        const qL = $('#q-location').value.toLowerCase();
+        const items = state.providers.filter(p => (!qS || p.category.toLowerCase().includes(qS) || p.name.toLowerCase().includes(qS)) && (!qL || p.location.toLowerCase().includes(qL)));
 
-        // render results
+        $('#filter-category').value = '';
+        $('#filter-location').value = '';
+        $('#sort-by').value = 'top';
         const grid = $('#providers-grid');
         grid.innerHTML = items.map(p=>`
           <article class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
@@ -565,99 +579,89 @@
               </div>
             </div>
             <p class="mt-3 text-slate-700">${p.bio}</p>
-            <div class="mt-4">
-              <button type="button" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold" data-book="${p.id}">Book</button>
+            <div class="mt-3 text-sm text-slate-600">Languages: ${p.languages||'—'}</div>
+            <div class="mt-4 flex gap-2">
+              <button class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold" data-book="${p.id}">Book</button>
             </div>
           </article>
         `).join('') || `<div class="col-span-full text-[#E6FFF1]">No results for your search.</div>`;
 
+        $$('#providers-grid [data-book]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.book)));
+        location.hash = '#browse';
+      });
+
+      $('#filter-category').addEventListener('change', renderProviders);
+      $('#filter-location').addEventListener('change', renderProviders);
+      $('#sort-by').addEventListener('change', renderProviders);
+
+      $('#btn-post').addEventListener('click', openPostModal);
+      $('#btn-post-2').addEventListener('click', openPostModal);
+
+      $('#request-form').addEventListener('submit', e=>{
+        e.preventDefault();
+        const r = {
+          id: 'r'+Date.now(),
+          title: $('#req-title').value,
+          location: $('#req-location').value,
+          budget: Number($('#req-budget').value||0),
+          date: $('#req-date').value,
+          contact: $('#req-contact').value,
+          details: $('#req-details').value
+        };
+        state.requests.unshift(r); db.save(state); renderRequests(); closePostModal();
+      });
+
+      $('#pro-form').addEventListener('submit', e=>{
+        e.preventDefault();
+        const p = {
+          id: 'p'+Date.now(),
+          name: $('#pro-name').value,
+          phone: $('#pro-phone').value,
+          category: $('#pro-category').value,
+          location: $('#pro-location').value,
+          rate: Number($('#pro-rate').value||0),
+          rating: 5.0,
+          verified: $('#pro-verified').checked,
+          languages: $('#pro-languages').value,
+          bio: $('#pro-bio').value
+        };
+        state.providers.unshift(p); db.save(state);
+        $('#pro-form').reset();
+        renderProviders();
+        alert('Profile created! Your listing is now live.');
         location.hash = '#browse';
       });
     }
 
-    // Dropdown filters
-    $('#filter-category')?.addEventListener('change', renderProviders);
-    $('#filter-location')?.addEventListener('change', renderProviders);
-    $('#sort-by')?.addEventListener('change', renderProviders);
-
-    // Post request modal
-    $('#btn-post')?.addEventListener('click', ()=>{ $('#post-modal').classList.remove('hidden'); $('#post-modal').classList.add('flex'); });
-    $('#btn-post-2')?.addEventListener('click', ()=>{ $('#post-modal').classList.remove('hidden'); $('#post-modal').classList.add('flex'); });
-    $('#post-close')?.addEventListener('click', ()=>{ $('#post-modal').classList.add('hidden'); $('#post-modal').classList.remove('flex'); });
-    $('#req-cancel')?.addEventListener('click', e=>{ e.preventDefault(); $('#post-modal').classList.add('hidden'); $('#post-modal').classList.remove('flex'); });
-
-    // Create request
-    $('#request-form')?.addEventListener('submit', e=>{
-      e.preventDefault();
-      const r = {
-        id: 'r'+Date.now(),
-        title: $('#req-title').value,
-        location: $('#req-location').value,
-        budget: Number($('#req-budget').value||0),
-        date: $('#req-date').value,
-        contact: $('#req-contact').value,
-        details: $('#req-details').value
-      };
-      state.requests.unshift(r); db.save(state); renderRequests();
-      $('#post-modal').classList.add('hidden'); $('#post-modal').classList.remove('flex');
-    });
-
-    // Create pro profile
-    $('#pro-form')?.addEventListener('submit', e=>{
-      e.preventDefault();
-      const p = {
-        id: 'p'+Date.now(),
-        name: $('#pro-name').value,
-        phone: $('#pro-phone').value,
-        category: $('#pro-category').value,
-        location: $('#pro-location').value,
-        rate: Number($('#pro-rate').value||0),
-        rating: 5.0,
-        verified: $('#pro-verified').checked,
-        languages: $('#pro-languages').value,
-        bio: $('#pro-bio').value
-      };
-      state.providers.unshift(p); db.save(state);
-      $('#pro-form').reset();
-      renderProviders();
-      alert('Profile created! Your listing is now live.');
-      location.hash = '#browse';
-    });
-
-    // Close booking modal
-    $('#modal-close')?.addEventListener('click', closeModal);
-
-    // *** Event Delegation for Book buttons (works after any render) ***
-    const providersGrid = $('#providers-grid');
-    if (providersGrid) {
-      providersGrid.addEventListener('click', (e)=>{
-        const btn = e.target.closest('[data-book]');
-        if (btn) openBookModal(btn.dataset.book);
+    function showSection(hash){
+      const id = hash.replace('#','') || 'home';
+      ['home','browse','requests','become-pro','bookings'].forEach(sec=>{
+        const el = document.getElementById(sec);
+        if(!el) return;
+        if (sec==='home') { document.querySelector('header').style.display = ''; }
+        el.style.scrollMarginTop = '80px';
       });
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }
+    window.addEventListener('hashchange', ()=>showSection(location.hash));
 
-  // ---------- Simple router ----------
-  function showSection(hash){
-    const id = hash.replace('#','') || 'home';
-    ['home','browse','requests','become-pro','bookings'].forEach(sec=>{
-      const el = document.getElementById(sec);
-      if(!el) return;
-      if (sec==='home') { document.querySelector('header').style.display = ''; }
-      el.style.scrollMarginTop = '80px';
-    });
-    const target = document.getElementById(id);
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  window.addEventListener('hashchange', ()=>showSection(location.hash));
+    function boot(){
+      initFilters();
+      renderProviders();
+      renderRequests();
+      renderBookings();
+      bindEvents();
+      $('#year').textContent = new Date().getFullYear();
+      showSection(location.hash || '#home');
+    }
+    document.addEventListener('DOMContentLoaded', boot);
 
-  // ---------- Notifications popover (guarded) ----------
-  function initBell(){
+    // Notifications popover logic
     const bellBtn = document.getElementById('notify-btn-nav');
     const pop = document.getElementById('notify-popover');
     const badge = document.getElementById('notify-badge');
     const markRead = document.getElementById('mark-read');
-    if (!bellBtn || !pop) return; // guard so no errors stop other JS
 
     function closePop() {
       pop.classList.add('hidden');
@@ -669,7 +673,7 @@
       badge?.classList.add('hidden');
     }
 
-    bellBtn.addEventListener('click', (e)=>{
+    bellBtn?.addEventListener('click', (e)=>{
       e.stopPropagation();
       if (pop.classList.contains('hidden')) openPop(); else closePop();
     });
@@ -679,22 +683,6 @@
       if (!pop.contains(e.target) && e.target !== bellBtn && !bellBtn.contains(e.target)) closePop();
     });
     document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closePop(); });
-  }
-
-  // ---------- Boot ----------
-  function boot(){
-    initFilters();
-    renderProviders();
-    renderRequests();
-    renderBookings();
-    bindEvents();
-    document.getElementById('year')?.textContent = new Date().getFullYear();
-    showSection(location.hash || '#home');
-    initBell();
-  }
-  document.addEventListener('DOMContentLoaded', boot);
-
-
   </script>
 </body>
 </html>
