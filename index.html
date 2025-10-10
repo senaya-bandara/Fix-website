@@ -885,87 +885,94 @@ function renderBookings(){
     }
 
     document.addEventListener('DOMContentLoaded', boot);
-    <script>
-// --- Notifications (upcoming bookings popover) ---
-const notifyBtn   = document.getElementById('notify-btn-nav');
-const notifyPanel = document.getElementById('notify-panel');
-const notifyList  = document.getElementById('notify-list');
-const notifyBadge = document.getElementById('notify-badge');
+ 
+    document.addEventListener('DOMContentLoaded', boot);
+  </script>
 
-function getUpcomingBookings(days=14){
-  const today = new Date(); today.setHours(0,0,0,0);
-  const ahead = new Date(); ahead.setDate(today.getDate()+days); ahead.setHours(23,59,59,999);
-  return [...state.bookings]
-    .filter(b => b.status !== 'Cancelled' && b.date)
-    .map(b => ({...b, dateObj: new Date(b.date)}))
-    .filter(b => !isNaN(b.dateObj) && b.dateObj >= today && b.dateObj <= ahead)
-    .sort((a,b) => a.dateObj - b.dateObj);
-}
+  <!-- Notifications script (separate block, not nested) -->
+  <script>
+    // --- Notifications (upcoming bookings popover) ---
+    const notifyBtn   = document.getElementById('notify-btn-nav');
+    const notifyPanel = document.getElementById('notify-panel');
+    const notifyList  = document.getElementById('notify-list');
+    const notifyBadge = document.getElementById('notify-badge');
 
-function renderNotify(){
-  const items = getUpcomingBookings(14);
-  notifyList.innerHTML = items.length ? items.map(b=>{
-    const now = new Date();
-    const daysLeft = Math.max(0, Math.ceil((b.dateObj - now)/(1000*60*60*24)));
-    return `
-      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
-        <div class="flex items-center justify-between">
-          <div class="font-semibold text-slate-900">${b.providerName}</div>
-          <span class="text-xs px-2 py-1 rounded-full ${daysLeft<=1 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
-            in ${daysLeft} day${daysLeft!==1?'s':''}
-          </span>
-        </div>
-        <div class="text-sm text-slate-600 mt-1">${b.category} • ${b.date} • ${b.hours}h • LKR ${fmt(b.total)}</div>
-        <div class="mt-2 flex gap-3">
-          <button class="text-sm text-fix-700 hover:underline" data-rebook="${b.providerId}">View / Edit</button>
-        </div>
-      </div>
-    `;
-  }).join('') : `<div class="text-sm text-slate-600">No upcoming bookings in the next 14 days.</div>`;
+    function getUpcomingBookings(days=14){
+      const today = new Date(); today.setHours(0,0,0,0);
+      const ahead = new Date(); ahead.setDate(today.getDate()+days); ahead.setHours(23,59,59,999);
+      return [...state.bookings]
+        .filter(b => b.status !== 'Cancelled' && b.date)
+        .map(b => ({...b, dateObj: new Date(b.date)}))
+        .filter(b => !isNaN(b.dateObj) && b.dateObj >= today && b.dateObj <= ahead)
+        .sort((a,b) => a.dateObj - b.dateObj);
+    }
 
-  // hook up buttons inside the panel
-  notifyList.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click', ()=>{
-    openBookModal(btn.dataset.rebook);
-    hidePanel();
-  }));
-}
+    function renderNotify(){
+      const items = getUpcomingBookings(14);
+      notifyList.innerHTML = items.length ? items.map(b=>{
+        const now = new Date();
+        const daysLeft = Math.max(0, Math.ceil((b.dateObj - now)/(1000*60*60*24)));
+        return `
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+            <div class="flex items-center justify-between">
+              <div class="font-semibold text-slate-900">${b.providerName}</div>
+              <span class="text-xs px-2 py-1 rounded-full ${daysLeft<=1 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
+                in ${daysLeft} day${daysLeft!==1?'s':''}
+              </span>
+            </div>
+            <div class="text-sm text-slate-600 mt-1">${b.category} • ${b.date} • ${b.hours}h • LKR ${fmt(b.total)}</div>
+            <div class="mt-2 flex gap-3">
+              <button class="text-sm text-fix-700 hover:underline" data-rebook="${b.providerId}">View / Edit</button>
+            </div>
+          </div>
+        `;
+      }).join('') : `<div class="text-sm text-slate-600">No upcoming bookings in the next 14 days.</div>`;
 
-function showPanel(){
-  renderNotify();
-  notifyPanel.classList.remove('hidden');
-  if (notifyBadge) notifyBadge.classList.add('hidden');
-}
-function hidePanel(){
-  notifyPanel.classList.add('hidden');
-}
-function togglePanel(){
-  if (notifyPanel.classList.contains('hidden')) showPanel(); else hidePanel();
-}
+      notifyList.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click', ()=>{
+        openBookModal(btn.dataset.rebook);
+        hidePanel();
+      }));
+    }
 
-function updateNotifyBadge(){
-  const n = getUpcomingBookings(14).length;
-  if (notifyBadge){
-    notifyBadge.textContent = n;
-    notifyBadge.classList.toggle('hidden', n===0);
-  }
-}
+    function showPanel(){
+      renderNotify();
+      notifyPanel.classList.remove('hidden');
+      notifyBadge?.classList.add('hidden');
+    }
 
-notifyBtn?.addEventListener('click', (e)=>{
-  e.stopPropagation();
-  togglePanel();
-});
-document.getElementById('notify-close')?.addEventListener('click', hidePanel);
-document.addEventListener('click', (e)=>{
-  const wrap = document.getElementById('notify-wrapper');
-  if (wrap && !wrap.contains(e.target)) hidePanel();
-});
+    function hidePanel(){
+      notifyPanel.classList.add('hidden');
+    }
 
-// keep badge fresh on load
-document.addEventListener('DOMContentLoaded', updateNotifyBadge);
+    function togglePanel(){
+      if (notifyPanel.classList.contains('hidden')) showPanel();
+      else hidePanel();
+    }
+
+    function updateNotifyBadge(){
+      const n = getUpcomingBookings(14).length;
+      if (notifyBadge){
+        notifyBadge.textContent = n;
+        notifyBadge.classList.toggle('hidden', n===0);
+      }
+    }
+
+    notifyBtn?.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      togglePanel();
+    });
+    document.getElementById('notify-close')?.addEventListener('click', hidePanel);
+    document.addEventListener('click', (e)=>{
+      const wrap = document.getElementById('notify-wrapper');
+      if (wrap && !wrap.contains(e.target)) hidePanel();
+    });
+
+    document.addEventListener('DOMContentLoaded', updateNotifyBadge);
+
 
 // also refresh badge after filters/renders if you want:
 // (already called after booking confirm & cancel)
-</script>
+
 
 
     // Bell click handler
