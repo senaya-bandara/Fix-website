@@ -65,19 +65,35 @@
       </div>
 
       <!-- Right side: Sign in + Bell + Post -->
-      <div class="flex items-center gap-3">
-        <button id="btn-login" class="hidden md:inline-flex px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">Sign in</button>
+     <!-- Right side: Sign in + Bell + Post -->
+<div class="flex items-center gap-3">
+  <button id="btn-login" class="hidden md:inline-flex px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">Sign in</button>
 
-        <!-- Bell next to Sign in -->
-        <button id="notify-btn-nav" class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative" aria-label="Notifications">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
-          </svg>
-          <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
-        </button>
+  <!-- Bell + popover -->
+  <div id="notify-wrapper" class="relative">
+    <button id="notify-btn-nav" class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative" aria-label="Notifications">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+      </svg>
+      <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">0</span>
+    </button>
 
-        <button id="btn-post" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold shadow-soft hover:bg-fix-700">Post a Request</button>
+    <!-- Popover panel -->
+    <div id="notify-panel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-soft border border-slate-200 z-50">
+      <div class="p-3 border-b border-slate-100">
+        <div class="font-semibold text-slate-900">Notifications</div>
+        <div class="text-xs text-slate-500">Upcoming bookings (next 14 days)</div>
       </div>
+      <div id="notify-list" class="p-3 space-y-2 max-h-80 overflow-auto"></div>
+      <div class="p-2 border-t border-slate-100 text-right">
+        <button id="notify-close" class="text-sm text-slate-600 hover:text-slate-800">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <button id="btn-post" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold shadow-soft hover:bg-fix-700">Post a Request</button>
+</div>
+
     </nav>
 
     <!-- Hero -->
@@ -455,62 +471,66 @@
     }
 
     // ------- Book modal -------
-    function openBookModal(pid){
-      const p = state.providers.find(x=>x.id===pid);
-      if(!p) return;
-      const body = $('#modal-body');
-      body.innerHTML = `
-        <div class="space-y-1">
-          <div class="text-sm text-slate-600">Provider</div>
-          <div class="font-bold text-lg">${p.name} — ${p.category}</div>
-        </div>
-        <div class="grid md:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-sm font-medium mb-1">Date</label>
-            <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Hours</label>
-            <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Address</label>
-          <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Notes</label>
-          <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
-        </div>
-        <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
-          <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
-          <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate*3)}</div>
-        </div>
-        <div class="flex justify-end gap-3">
-          <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
-          <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
-        </div>`;
 
-      const hours = $('#bk-hours');
-      const total = ()=> $('#bk-total').textContent = 'Total: LKR ' + fmt(p.rate * Math.max(1, Number(hours.value||1)));
-      hours.addEventListener('input', total);
+function openBookModal(pid){
+  const p = state.providers.find(x=>x.id===pid);
+  if(!p) return;
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <div class="space-y-1">
+      <div class="text-sm text-slate-600">Provider</div>
+      <div class="font-bold text-lg">${p.name} — ${p.category}</div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3">
+      <div>
+        <label class="block text-sm font-medium mb-1">Date</label>
+        <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Hours</label>
+        <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Address</label>
+      <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Notes</label>
+      <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
+    </div>
+    <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+      <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
+      <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate*3)}</div>
+    </div>
+    <div class="flex justify-end gap-3">
+      <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+      <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
+    </div>`;
 
-      $('#bk-cancel').onclick = closeModal;
-      $('#bk-confirm').onclick = ()=>{
-        const b = {
-          id: 'b'+Date.now(), providerId: p.id, providerName: p.name, category: p.category,
-          date: $('#bk-date').value, hours: Number($('#bk-hours').value||1),
-          address: $('#bk-address').value, notes: $('#bk-notes').value, rate: p.rate,
-          total: p.rate * Math.max(1, Number($('#bk-hours').value||1)),
-          status: 'Confirmed'
-        };
-        state.bookings.unshift(b); db.save(state); renderBookings(); closeModal();
-        alert('Booking confirmed! (simulated)');
-      }
+  const hours = document.getElementById('bk-hours');
+  const total = ()=> document.getElementById('bk-total').textContent = 'Total: LKR ' + fmt(p.rate * Math.max(1, Number(hours.value||1)));
+  hours.addEventListener('input', total);
 
-      document.getElementById('modal').classList.remove('hidden');
-      document.getElementById('modal').classList.add('flex');
-    }
+  document.getElementById('bk-cancel').onclick = closeModal;
+  document.getElementById('bk-confirm').onclick = ()=>{
+    const b = {
+      id: 'b'+Date.now(), providerId: p.id, providerName: p.name, category: p.category,
+      date: document.getElementById('bk-date').value, hours: Number(document.getElementById('bk-hours').value||1),
+      address: document.getElementById('bk-address').value, notes: document.getElementById('bk-notes').value, rate: p.rate,
+      total: p.rate * Math.max(1, Number(document.getElementById('bk-hours').value||1)),
+      status: 'Confirmed'
+    };
+    state.bookings.unshift(b); db.save(state); renderBookings(); closeModal();
+    updateNotifyBadge(); // ⬅️ update notifications
+    alert('Booking confirmed! (simulated)');
+  }
+
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').classList.add('flex');
+}
+
+
 
     function closeModal(){
       document.getElementById('modal').classList.add('hidden');
@@ -519,37 +539,40 @@
 
     document.getElementById('modal-close').addEventListener('click', closeModal);
 
-    // ------- Render bookings -------
-    function renderBookings(){
-      const list = $('#bookings-list');
-      list.innerHTML = state.bookings.map(b=>`
-        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="font-bold">${b.providerName}</div>
-              <div class="text-slate-600 text-sm">${b.category} • ${b.date} • ${b.hours}h</div>
-            </div>
-            <div class="text-right">
-              <div class="font-extrabold">LKR ${fmt(b.total)}</div>
-              ${badge(b.status, b.status==='Confirmed'?'emerald':'slate')}
-            </div>
-          </div>
-          <div class="mt-3 text-sm text-slate-700">${b.address}</div>
-          <div class="mt-4 flex gap-2">
-            <button class="px-4 py-2 rounded-xl bg-slate-100" data-cancel="${b.id}">Cancel</button>
-            <button class="px-4 py-2 rounded-xl bg-fix-500 text-white" data-rebook="${b.providerId}">Rebook</button>
-          </div>
+
+function renderBookings(){
+  const list = document.getElementById('bookings-list');
+  list.innerHTML = state.bookings.map(b=>`
+    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-bold">${b.providerName}</div>
+          <div class="text-slate-600 text-sm">${b.category} • ${b.date} • ${b.hours}h</div>
         </div>
-      `).join('') || `<div class="text-slate-600">No bookings yet.</div>`;
+        <div class="text-right">
+          <div class="font-extrabold">LKR ${fmt(b.total)}</div>
+          ${badge(b.status, b.status==='Confirmed'?'emerald':'slate')}
+        </div>
+      </div>
+      <div class="mt-3 text-sm text-slate-700">${b.address}</div>
+      <div class="mt-4 flex gap-2">
+        <button class="px-4 py-2 rounded-xl bg-slate-100" data-cancel="${b.id}">Cancel</button>
+        <button class="px-4 py-2 rounded-xl bg-fix-500 text-white" data-rebook="${b.providerId}">Rebook</button>
+      </div>
+    </div>
+  `).join('') || `<div class="text-slate-600">No bookings yet.</div>`;
 
-      list.querySelectorAll('[data-cancel]').forEach(btn=>btn.addEventListener('click',()=>{
-        const id = btn.dataset.cancel;
-        const bk = state.bookings.find(x=>x.id===id); if(!bk) return;
-        bk.status = 'Cancelled'; db.save(state); renderBookings();
-      }));
+  list.querySelectorAll('[data-cancel]').forEach(btn=>btn.addEventListener('click',()=>{
+    const id = btn.dataset.cancel;
+    const bk = state.bookings.find(x=>x.id===id); if(!bk) return;
+    bk.status = 'Cancelled'; db.save(state); renderBookings();
+    updateNotifyBadge(); // ⬅️ keep notifications in sync
+  }));
 
-      list.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.rebook)));
-    }
+  list.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click',()=>openBookModal(btn.dataset.rebook)));
+}
+
+
 
     // ------- Post a request modal -------
     function openPostModal(){
@@ -675,6 +698,88 @@
     }
 
     document.addEventListener('DOMContentLoaded', boot);
+    <script>
+// --- Notifications (upcoming bookings popover) ---
+const notifyBtn   = document.getElementById('notify-btn-nav');
+const notifyPanel = document.getElementById('notify-panel');
+const notifyList  = document.getElementById('notify-list');
+const notifyBadge = document.getElementById('notify-badge');
+
+function getUpcomingBookings(days=14){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const ahead = new Date(); ahead.setDate(today.getDate()+days); ahead.setHours(23,59,59,999);
+  return [...state.bookings]
+    .filter(b => b.status !== 'Cancelled' && b.date)
+    .map(b => ({...b, dateObj: new Date(b.date)}))
+    .filter(b => !isNaN(b.dateObj) && b.dateObj >= today && b.dateObj <= ahead)
+    .sort((a,b) => a.dateObj - b.dateObj);
+}
+
+function renderNotify(){
+  const items = getUpcomingBookings(14);
+  notifyList.innerHTML = items.length ? items.map(b=>{
+    const now = new Date();
+    const daysLeft = Math.max(0, Math.ceil((b.dateObj - now)/(1000*60*60*24)));
+    return `
+      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold text-slate-900">${b.providerName}</div>
+          <span class="text-xs px-2 py-1 rounded-full ${daysLeft<=1 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
+            in ${daysLeft} day${daysLeft!==1?'s':''}
+          </span>
+        </div>
+        <div class="text-sm text-slate-600 mt-1">${b.category} • ${b.date} • ${b.hours}h • LKR ${fmt(b.total)}</div>
+        <div class="mt-2 flex gap-3">
+          <button class="text-sm text-fix-700 hover:underline" data-rebook="${b.providerId}">View / Edit</button>
+        </div>
+      </div>
+    `;
+  }).join('') : `<div class="text-sm text-slate-600">No upcoming bookings in the next 14 days.</div>`;
+
+  // hook up buttons inside the panel
+  notifyList.querySelectorAll('[data-rebook]').forEach(btn=>btn.addEventListener('click', ()=>{
+    openBookModal(btn.dataset.rebook);
+    hidePanel();
+  }));
+}
+
+function showPanel(){
+  renderNotify();
+  notifyPanel.classList.remove('hidden');
+  if (notifyBadge) notifyBadge.classList.add('hidden');
+}
+function hidePanel(){
+  notifyPanel.classList.add('hidden');
+}
+function togglePanel(){
+  if (notifyPanel.classList.contains('hidden')) showPanel(); else hidePanel();
+}
+
+function updateNotifyBadge(){
+  const n = getUpcomingBookings(14).length;
+  if (notifyBadge){
+    notifyBadge.textContent = n;
+    notifyBadge.classList.toggle('hidden', n===0);
+  }
+}
+
+notifyBtn?.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  togglePanel();
+});
+document.getElementById('notify-close')?.addEventListener('click', hidePanel);
+document.addEventListener('click', (e)=>{
+  const wrap = document.getElementById('notify-wrapper');
+  if (wrap && !wrap.contains(e.target)) hidePanel();
+});
+
+// keep badge fresh on load
+document.addEventListener('DOMContentLoaded', updateNotifyBadge);
+
+// also refresh badge after filters/renders if you want:
+// (already called after booking confirm & cancel)
+</script>
+
 
     // Bell click handler
     document.getElementById('notify-btn-nav')?.addEventListener('click', () => {
