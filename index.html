@@ -525,10 +525,15 @@
   const $ = s => document.querySelector(s);
   const fmt = n => new Intl.NumberFormat('en-LK').format(n);
 
-  // ------- BOOKING MODAL -------
-  function openBookModal(pid) {
-  const p = state.providers.find(x => x.id === pid);
-  if (!p) return;
+ <script>
+// ------- BOOKING MODAL -------
+function openBookModal(pid) {
+  // ✅ Ensure provider exists
+  const p = (state.providers || []).find(x => x.id === pid);
+  if (!p) {
+    console.warn("Provider not found:", pid);
+    return;
+  }
 
   const modal = document.getElementById("modal");
   const body = document.getElementById("modal-body");
@@ -575,7 +580,6 @@
 
   document.getElementById("bk-cancel").onclick = closeModal;
 
-  // ✅ Confirm booking handler – updates “My Bookings” instantly
   document.getElementById("bk-confirm").onclick = () => {
     const dateVal = document.getElementById("bk-date").value;
     if (!dateVal) {
@@ -598,15 +602,12 @@
       status: "Confirmed",
     };
 
-    // Save + refresh immediately
     state.bookings.unshift(booking);
     db.save(state);
-
-    renderBookings();       // ✅ refresh “My Bookings” list right away
-    updateNotifyBadge();    // keep notification count in sync
+    renderBookings();
+    updateNotifyBadge();
     closeModal();
 
-    // Toast message
     const toast = document.createElement("div");
     toast.textContent = "✅ Booking confirmed successfully!";
     toast.className = "fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft";
@@ -618,15 +619,16 @@
   modal.classList.add("flex");
 }
 
-  $('#modal-close').addEventListener('click', closeModal);
-
-  // ------- ACTIVATE BOOK BUTTONS -------
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[data-book]').forEach(btn => {
-      btn.addEventListener('click', () => openBookModal(btn.dataset.book));
+// ------- ACTIVATE BOOK BUTTONS -------
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("[data-book]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      openBookModal(btn.dataset.book);
     });
-    updateNotifyBadge();
   });
+});
+
+
 
   // ------- NOTIFY BADGE -------
   function getUpcomingBookings(days = 14) {
@@ -739,19 +741,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
-  <script>
-// --- Core utility: Close modal ---
+
 <script>
-// --- Core utility: Close modal ---
+
 function closeModal() {
   const modal = document.getElementById("modal");
-  if (modal) {
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-  }
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
 }
+</script>
 
-// --- Render all confirmed bookings in "My Bookings" ---
+<script>
 function renderBookings() {
   const list = document.getElementById("bookings-list");
   if (!list) return;
@@ -763,12 +763,12 @@ function renderBookings() {
   }
 
   list.innerHTML = bookings.map(b => `
-    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
       <div class="flex items-start justify-between">
         <div>
           <h3 class="text-lg font-bold">${b.providerName}</h3>
-          <div class="mt-1 text-slate-600">${b.category}</div>
-          <div class="mt-1 text-slate-500 text-sm">${b.date} • ${b.hours}h</div>
+          <div class="text-slate-600">${b.category}</div>
+          <div class="text-slate-500 text-sm">${b.date} • ${b.hours}h</div>
         </div>
         <div class="text-right">
           <div class="text-xl font-extrabold">LKR ${fmt(b.total)}</div>
@@ -780,6 +780,8 @@ function renderBookings() {
     </div>
   `).join("");
 }
+
+
 
 // --- Initial load ---
 document.addEventListener("DOMContentLoaded", renderBookings);
