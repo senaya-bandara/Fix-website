@@ -201,11 +201,85 @@
             <option value="top">Sort: Top rated</option>
             <option value="price-asc">Price: Low → High</option>
             <option value="price-desc">Price: High → Low</option>
+            
           </select>
+          <button id="clear-browse" class="px-4 py-2 rounded-xl bg-white/70 border border-slate-200 hover:bg-white">
+  Clear
+</button>
+
         </div>
       </div>
+      <!-- Starter tiles shown until a search/filter happens -->
+<div id="browse-tiles" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <button data-cat="Elder care" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Elder care</div>
+    <p class="mt-1 text-slate-600 text-sm">Companions • Nursing support</p>
+  </button>
+  <button data-cat="Babysitting" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Babysitting</div>
+    <p class="mt-1 text-slate-600 text-sm">Trained nannies • CPR</p>
+  </button>
+  <button data-cat="Cleaning" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Cleaning</div>
+    <p class="mt-1 text-slate-600 text-sm">Homes • Offices</p>
+  </button>
+  <button data-cat="Driving" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Driving</div>
+    <p class="mt-1 text-slate-600 text-sm">Airport • Day hires</p>
+  </button>
+  <button data-cat="Physiotherapy" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Skilled</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Physiotherapy</div>
+    <p class="mt-1 text-slate-600 text-sm">Rehab • Mobility</p>
+  </button>
+  <button data-cat="Event staff" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Seasonal</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Event staff</div>
+    <p class="mt-1 text-slate-600 text-sm">Weddings • Parties</p>
+  </button>
+</div>
 
-      <div id="providers-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+<!-- Starter tiles shown until a search/filter happens -->
+<div id="browse-tiles" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <button data-cat="Elder care" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Elder care</div>
+    <p class="mt-1 text-slate-600 text-sm">Companions • Nursing support</p>
+  </button>
+  <button data-cat="Babysitting" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Babysitting</div>
+    <p class="mt-1 text-slate-600 text-sm">Trained nannies • CPR</p>
+  </button>
+  <button data-cat="Cleaning" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Cleaning</div>
+    <p class="mt-1 text-slate-600 text-sm">Homes • Offices</p>
+  </button>
+  <button data-cat="Driving" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Driving</div>
+    <p class="mt-1 text-slate-600 text-sm">Airport • Day hires</p>
+  </button>
+  <button data-cat="Physiotherapy" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Skilled</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Physiotherapy</div>
+    <p class="mt-1 text-slate-600 text-sm">Rehab • Mobility</p>
+  </button>
+  <button data-cat="Event staff" class="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+    <div class="text-xs uppercase tracking-wide text-fix-700">Seasonal</div>
+    <div class="mt-1 font-extrabold text-slate-900 text-lg">Event staff</div>
+    <p class="mt-1 text-slate-600 text-sm">Weddings • Parties</p>
+  </button>
+</div>
+
+<!-- Results grid (reused for both browse + search) -->
+<div id="providers-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
     </section>
 
     <!-- Requests Board -->
