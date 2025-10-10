@@ -1038,8 +1038,9 @@ document.addEventListener("DOMContentLoaded", () => {
     list.map(l => `<option value="${l}">${l}</option>`).join("");
 });
 </script>
-  <!-- Sign In Modal -->
-<div id="login-modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
+<!-- Sign In Modal -->
+<div id="login-modal"
+     class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
   <div class="bg-white max-w-sm w-full rounded-2xl shadow-soft overflow-hidden">
     <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
       <h3 class="font-bold text-lg">Sign in to Fix</h3>
@@ -1048,15 +1049,22 @@ document.addEventListener("DOMContentLoaded", () => {
     <form id="login-form" class="p-6 space-y-4">
       <div>
         <label class="block text-sm font-medium mb-1">Your name</label>
-        <input id="login-name" required class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Jane Perera"/>
+        <input id="login-name" required
+               class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"
+               placeholder="Jane Perera" />
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Email</label>
-        <input id="login-email" required type="email" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="jane@example.com"/>
+        <input id="login-email" required type="email"
+               class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"
+               placeholder="jane@example.com" />
       </div>
       <div class="flex justify-end gap-3 mt-2">
-        <button type="button" id="login-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
-        <button class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">Sign in</button>
+        <button type="button" id="login-cancel"
+                class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+        <button class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">
+          Sign in
+        </button>
       </div>
     </form>
   </div>
