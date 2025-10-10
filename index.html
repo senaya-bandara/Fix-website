@@ -9,6 +9,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body { height:100%; }
+    .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,.7); }
+    .clip-blob { clip-path: path('M40 0C68 0 90 18 100 45c10 27 5 54-12 72S47 139 25 130 0 98 0 70 12 0 40 0z'); }
+    #notify-btn {
+  position: fixed !important;
+  top: 0;
+  right: 0;
+  margin: 12px;         /* adjust if needed */
+  z-index: 99999;
+}
+
+  </style>
   <script>
     tailwind.config = {
       theme: {
@@ -28,11 +41,7 @@
       }
     }
   </script>
-  <style>
-    html, body { height:100%; }
-    .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,.7); }
-    .clip-blob { clip-path: path('M40 0C68 0 90 18 100 45c10 27 5 54-12 72S47 139 25 130 0 98 0 70 12 0 40 0z'); }
-  </style>
+  
 </head>
 <body class="text-slate-800">
   <!-- Full-page background gradient -->
@@ -663,14 +672,15 @@
   </script>
 
   <!-- Notification bell fixed to the top-right corner -->
-  <button id="notify-btn"
-    class="fixed top-0 right-0 m-3 md:m-5 z-[999] p-3 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
-    aria-label="Notifications">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
-    </svg>
-    <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
-  </button>
+ <button id="notify-btn"
+  class="rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
+  aria-label="Notifications">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+  </svg>
+  <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">3</span>
+</button>
+
 
   <script>
     // Bell click handler (after the element exists)
