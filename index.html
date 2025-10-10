@@ -1019,6 +1019,28 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRequests();
 });
 </script>
+</script>
+
+<!-- Populate location dropdown in "Post a Request" -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const reqLoc = document.getElementById("req-location");
+  if (!reqLoc) return;
+
+  const locations =
+    [...new Set((state?.providers || []).map(p => p.location))].sort();
+
+  const fallback = ["Colombo","Gampaha","Kandy","Galle","Matara","Jaffna","Negombo","Kalutara"];
+  const list = locations.length ? locations : fallback;
+
+  reqLoc.innerHTML =
+    `<option value="" disabled selected>Select location</option>` +
+    list.map(l => `<option value="${l}">${l}</option>`).join("");
+});
+</script>
+
+</body>
+</html>
 
 
 
