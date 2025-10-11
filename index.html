@@ -963,7 +963,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load existing requests from localStorage
   let requests = JSON.parse(localStorage.getItem("fix-requests") || "[]");
 
-  // Function to render all open requests
+   // Function to render all open requests
   function renderRequests() {
     if (!reqList) return;
     if (requests.length === 0) {
@@ -987,10 +987,32 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <p class="mt-3 text-slate-700">${r.details}</p>
         <p class="mt-2 text-slate-500 text-sm">Contact: ${r.contact}</p>
+        <div class="mt-4 text-right">
+          <button data-cancel-req="${r.id}" class="text-sm text-red-600 hover:text-red-800 font-medium">Cancel request</button>
+        </div>
       </div>`
       )
       .join("");
+
+    // Attach cancel handlers
+    reqList.querySelectorAll("[data-cancel-req]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.cancelReq;
+        if (confirm("Are you sure you want to cancel this request?")) {
+          requests = requests.filter(r => r.id !== id);
+          localStorage.setItem("fix-requests", JSON.stringify(requests));
+          renderRequests();
+
+          const toast = document.createElement("div");
+          toast.textContent = "❌ Request cancelled.";
+          toast.className = "fixed bottom-6 right-6 bg-red-500 text-white px-5 py-3 rounded-xl shadow-soft";
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 2500);
+        }
+      });
+    });
   }
+
 
   // Show modal
   function openPostModal() {
