@@ -3,8 +3,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Fix — Find trusted help nearby</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fix — Find trusted help nearby</title>
   <meta name="description" content="Fix is a hyperlocal marketplace to book trusted help for care, home and events." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,18 +31,22 @@
   <style>
     html, body { height:100%; }
     .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,.7); }
+    .clip-blob { clip-path: path('M40 0C68 0 90 18 100 45c10 27 5 54-12 72S47 139 25 130 0 98 0 70 12 0 40 0z'); }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 bg-slate-950/90 font-sans">
-  <!-- Background -->
+<body class="text-slate-800 font-sans">
+  <!-- Full-page background gradient -->
   <div class="fixed inset-0 -z-50">
     <div class="absolute inset-0 bg-gradient-to-br from-[#4EC67E] via-[#1F6D47] to-[#0B3E29]"></div>
     <div class="absolute inset-0 bg-[radial-gradient(60%_80%_at_70%_10%,rgba(255,255,255,0.18),transparent_60%)]"></div>
   </div>
 
-  <!-- Header / Nav -->
+  <!-- Top Bar -->
   <header class="relative">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#4EC67E] via-[#1F6D47] to-[#0B3E29] opacity-95"></div>
+    <div class="absolute right-[-80px] top-[-80px] w-[280px] h-[280px] clip-blob bg-white/10"></div>
+
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-white/90 flex items-center justify-center shadow-soft">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 text-fix-600">
@@ -52,116 +56,278 @@
         <a href="#home" class="text-white text-2xl font-extrabold tracking-tight">Fix</a>
       </div>
 
-      <nav class="hidden md:flex items-center text-white/90 font-medium gap-6">
-        <a href="#browse" class="hover:text-white">Browse</a>
-        <a href="#emergency" class="hover:text-white">Emergency</a>
-      </nav>
-    </div>
+      <div class="hidden md:flex items-center text-white/90 font-medium divide-x divide-white/25">
+        <a href="#browse" class="px-3 hover:text-white">Browse</a>
+        <a href="#requests" class="px-3 hover:text-white">Requests</a>
+        <a href="#become-pro" class="px-3 hover:text-white">Become a Pro</a>
+        <a href="#bookings" class="px-3 hover:text-white">My Bookings</a>
+        <a href="#emergency" class="px-3 hover:text-white">Emergency Services</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="btn-login" class="hidden md:inline-flex px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">Sign in</button>
+
+        <!-- Bell + popover -->
+        <div id="notify-wrapper" class="relative">
+          <button id="notify-btn-nav" class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative" aria-label="Notifications">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+            </svg>
+            <span id="notify-badge" class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center hidden">0</span>
+          </button>
+
+          <div id="notify-panel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-soft border border-slate-200 z-50">
+            <div class="p-3 border-b border-slate-100">
+              <div class="font-semibold text-slate-900">Notifications</div>
+              <div class="text-xs text-slate-500">Upcoming bookings (next 14 days)</div>
+            </div>
+            <div id="notify-list" class="p-3 space-y-2 max-h-80 overflow-auto"></div>
+            <div class="p-2 border-t border-slate-100 text-right">
+              <button id="notify-close" class="text-sm text-slate-600 hover:text-slate-800">Close</button>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-post" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold shadow-soft hover:bg-fix-700">Post a Request</button>
+      </div>
+    </nav>
 
     <!-- Hero -->
-    <section id="home" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16 text-white">
+    <section id="home" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 text-white">
       <div class="grid lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 class="text-4xl lg:text-5xl font-extrabold leading-tight">
-            Find trusted help, <span class="underline decoration-emerald-300">right now</span>.
-          </h1>
-          <p class="mt-4 text-white/90 text-lg">
-            Care, home, events — Fix matches you with verified local professionals in minutes.
-          </p>
-
-          <form id="search-form" class="mt-8 bg-white/10 rounded-2xl p-4 glass shadow-soft grid md:grid-cols-5 gap-3">
-            <div class="md:col-span-2">
-              <label class="block text-sm text-white/80 mb-1">Service</label>
-              <input id="q-service" type="text" placeholder="elder care, cleaning, driver…"
-                     class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
-            </div>
-            <div class="md:col-span-2">
-              <label class="block text-sm text-white/80 mb-1">Location</label>
-              <input id="q-location" type="text" placeholder="Colombo, Kandy…"
-                     class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
-            </div>
-            <div>
-              <label class="block text-sm text-white/80 mb-1">Date</label>
-              <input id="q-date" type="date"
-                     class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
-            </div>
-            <div class="md:col-span-5 flex gap-3 mt-2">
-              <button type="submit" class="px-5 py-3 rounded-xl bg-emerald-400 text-slate-900 font-semibold hover:bg-emerald-300">
-                Search
-              </button>
-              <button id="clear-browse" type="button"
-                      class="px-5 py-3 rounded-xl bg-white/90 text-fix-700 font-semibold hover:bg-white">
-                Clear
-              </button>
-            </div>
-          </form>
-
+          <h1 class="text-4xl lg:text-6xl font-extrabold leading-tight">Find trusted help, <span class="underline decoration-emerald-300">right now</span>.</h1>
+          <p class="mt-4 text-white/90 text-lg">Care, home, events, wellness — Fix matches you with verified local professionals in minutes. Transparent rates. Reviews you can trust.</p>
+          <div class="mt-8 bg-white/10 rounded-2xl p-4 glass shadow-soft">
+            <form id="search-form" class="grid md:grid-cols-5 gap-3">
+              <div class="md:col-span-2">
+                <label class="block text-sm text-white/80 mb-1">Service</label>
+                <input id="q-service" type="text" placeholder="elder care, cleaning, driver…" class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm text-white/80 mb-1">Location</label>
+                <input id="q-location" type="text" placeholder="Colombo, Kandy…" class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+              </div>
+              <div>
+                <label class="block text-sm text-white/80 mb-1">Date</label>
+                <input id="q-date" type="date" class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+              </div>
+              <div class="md:col-span-5 flex gap-3 mt-2">
+                <button class="px-5 py-3 rounded-xl bg-emerald-400 text-slate-900 font-semibold hover:bg-emerald-300" type="submit">Search</button>
+                <a href="#browse" class="px-5 py-3 rounded-xl bg-white/90 text-fix-700 font-semibold hover:bg-white">See all</a>
+              </div>
+            </form>
+          </div>
           <div class="mt-6 flex items-center gap-6 text-white/80">
             <div class="flex items-center gap-2"><span class="font-bold text-white">1,200+</span> verified pros</div>
             <div class="flex items-center gap-2"><span class="font-bold text-white">4.8★</span> average rating</div>
+            <div class="flex items-center gap-2">Insurance-ready</div>
           </div>
         </div>
 
         <div class="relative">
+          <div class="absolute -top-6 -left-6 w-40 h-40 rounded-3xl bg-white/10"></div>
           <div class="relative bg-white rounded-3xl p-6 shadow-soft">
             <h3 class="text-slate-900 font-bold text-xl">Trending near you</h3>
-            <ul id="trending" class="mt-4 space-y-3 text-slate-800 text-sm">
-              <li>👵 Elder care companions in Colombo</li>
-              <li>🧹 Deep cleaning for apartments</li>
-              <li>🚗 Airport pickup drivers from Kandy</li>
-              <li>👶 Babysitters for weekend evenings</li>
+            <ul id="trending" class="mt-4 grid grid-cols-2 gap-4 text-sm text-slate-700">
+              <li class="p-4 rounded-xl border border-slate-200 bg-white">
+                <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+                <div class="font-bold text-slate-900 mt-1">Elder care</div>
+                <ul class="mt-2 space-y-1">
+                  <li><a href="profile.html?id=p1" class="hover:text-fix-600 hover:underline">Nimali Jayasinghe</a></li>
+                  <li class="text-slate-500">Sunethra Silva</li>
+                  <li class="text-slate-500">Anoma de Silva</li>
+                </ul>
+              </li>
+              <li class="p-4 rounded-xl border border-slate-200 bg-white">
+                <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+                <div class="font-bold text-slate-900 mt-1">Driving</div>
+                <ul class="mt-2 space-y-1">
+                  <li><a href="profile.html?id=p2" class="hover:text-fix-600 hover:underline">Ravi Kannan</a></li>
+                  <li class="text-slate-500">Kasun Madushanka</li>
+                  <li class="text-slate-500">Tharaka Jayasuriya</li>
+                </ul>
+              </li>
+              <li class="p-4 rounded-xl border border-slate-200 bg-white">
+                <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+                <div class="font-bold text-slate-900 mt-1">Cleaning</div>
+                <ul class="mt-2 space-y-1">
+                  <li><a href="profile.html?id=p3" class="hover:text-fix-600 hover:underline">Ishara Perera</a></li>
+                  <li class="text-slate-500">Kasun Madushanka</li>
+                  <li class="text-slate-500">Tharushi Senanayake</li>
+                </ul>
+              </li>
+              <li class="p-4 rounded-xl border border-slate-200 bg-white">
+                <div class="text-xs uppercase tracking-wide text-fix-700">Popular</div>
+                <div class="font-bold text-slate-900 mt-1">Babysitting & events</div>
+                <ul class="mt-2 space-y-1">
+                  <li><a href="profile.html?id=p6" class="hover:text-fix-600 hover:underline">Dilini Fernando</a></li>
+                  <li><a href="profile.html?id=p8" class="hover:text-fix-600 hover:underline">Ahamed Rizvi</a></li>
+                </ul>
+              </li>
             </ul>
           </div>
         </div>
+
       </div>
     </section>
   </header>
 
-  <!-- Main -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-    <!-- Browse -->
-    <section id="browse" class="mt-4 space-y-6">
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Filters & Browse -->
+    <section id="browse" class="space-y-6">
       <div class="flex items-end justify-between gap-4 flex-wrap">
         <div>
           <h2 class="text-2xl font-extrabold text-white">Browse providers</h2>
-          <p class="text-[#E6FFF1]">Click a profile to see full portfolio.</p>
+          <p class="text-[#E6FFF1]">Filter by category, location, and rating</p>
+        </div>
+        <div class="flex gap-3">
+          <select id="filter-category" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
+            <option value="">All categories</option>
+          </select>
+          <select id="filter-location" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
+            <option value="">All locations</option>
+          </select>
+          <select id="sort-by" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
+            <option value="top">Sort: Top rated</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+          </select>
+          <button id="clear-browse" class="px-4 py-2 rounded-xl bg-white/70 border border-slate-200 hover:bg-white">Clear</button>
         </div>
       </div>
 
+      <div id="browse-tiles" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       <div id="providers-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- Emergency -->
-    <section id="emergency" class="space-y-6 mt-16">
-      <h2 class="text-2xl font-extrabold text-white">Emergency services</h2>
-      <p class="text-[#E6FFF1]">Find a verified provider available right now.</p>
+    <!-- Requests Board -->
+    <section id="requests" class="space-y-6 mt-16">
+      <div class="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h2 class="text-2xl font-extrabold text-white">Open requests</h2>
+          <p class="text-[#E6FFF1]">Post what you need and get offers</p>
+        </div>
+        <button id="btn-post-2" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold shadow-soft hover:bg-fix-700">Post a Request</button>
+      </div>
+      <div id="requests-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
 
-      <div class="mt-4 bg-white/10 rounded-2xl p-4 glass shadow-soft">
+    <!-- Become a Pro -->
+    <section id="become-pro" class="space-y-6 mt-16">
+      <h2 class="text-2xl font-extrabold text-white">Become a Pro on Fix</h2>
+      <p class="text-[#E6FFF1]">Verify your identity, set your rates, and get booked by nearby clients.</p>
+      <form id="pro-form" class="grid md:grid-cols-2 gap-4 bg-white rounded-2xl p-6 shadow-soft">
+        <div>
+          <label class="block text-sm font-medium mb-1">Full name</label>
+          <input required id="pro-name" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Jane Perera"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Phone</label>
+          <input required id="pro-phone" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="07x xxx xxxx"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Category</label>
+          <select required id="pro-category" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"></select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Location</label>
+          <select required id="pro-location" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"></select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Rate (LKR/hour)</label>
+          <input required id="pro-rate" type="number" min="100" step="50" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Languages</label>
+          <input id="pro-languages" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Sinhala, Tamil, English"/>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1">About you</label>
+          <textarea id="pro-bio" rows="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Short bio and experience"></textarea>
+        </div>
+        <div class="md:col-span-2 flex items-center gap-2">
+          <input id="pro-verified" type="checkbox" class="w-4 h-4"/>
+          <label for="pro-verified" class="text-sm">I have uploaded ID for verification <span class="text-slate-500">(simulated)</span></label>
+        </div>
+        <div class="md:col-span-2">
+          <button class="px-5 py-3 rounded-xl bg-emerald-400 text-slate-900 font-semibold hover:bg-emerald-300">Create profile</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- My Bookings -->
+    <section id="bookings" class="space-y-6 mt-16">
+      <h2 class="text-2xl font-extrabold text-white">My Bookings</h2>
+      <p class="text-[#E6FFF1]">Your confirmed service bookings appear here.</p>
+      <div id="bookings-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- Emergency Services -->
+    <section id="emergency" class="space-y-6 mt-16">
+      <h2 class="text-2xl font-extrabold text-white">Emergency Services</h2>
+      <p class="text-[#E6FFF1]">Find a verified service provider available right now.</p>
+
+      <div class="mt-6 bg-white/10 rounded-2xl p-4 glass shadow-soft">
         <form id="emergency-form" class="grid md:grid-cols-4 gap-3">
           <div class="md:col-span-2">
             <label class="block text-sm text-white/80 mb-1">Service</label>
-            <input id="emg-service" type="text" placeholder="Plumber, driver, nurse…"
-                   class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+            <input id="emg-service" type="text" placeholder="Plumber, Electrician, Nurse…" class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
           </div>
           <div>
             <label class="block text-sm text-white/80 mb-1">Location</label>
-            <input id="emg-location" type="text" placeholder="Colombo, Kandy…"
-                   class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+            <input id="emg-location" type="text" placeholder="Colombo, Kandy…" class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
           </div>
           <div class="flex items-end">
-            <button type="submit"
-                    class="px-5 py-3 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 w-full">
-              Find now
-            </button>
+            <button type="submit" class="px-5 py-3 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 w-full">Find Now</button>
           </div>
         </form>
       </div>
 
       <div id="emergency-results" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"></div>
     </section>
+
   </main>
 
-  <!-- Simple booking modal -->
+  <!-- Footer -->
+  <footer class="mt-20 border-t border-slate-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-fix-500"></div>
+          <div class="text-xl font-extrabold">Fix</div>
+        </div>
+        <p class="text-slate-600 mt-3">A hyperlocal marketplace for trusted human services. Built for Sri Lanka.</p>
+      </div>
+      <div>
+        <h4 class="font-bold mb-2">Explore</h4>
+        <ul class="space-y-1 text-slate-600">
+          <li><a href="#browse" class="hover:text-fix-600">Browse providers</a></li>
+          <li><a href="#requests" class="hover:text-fix-600">Open requests</a></li>
+          <li><a href="#become-pro" class="hover:text-fix-600">Become a pro</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-2">Company</h4>
+        <ul class="space-y-1 text-slate-600">
+          <li><a href="#" class="hover:text-fix-600">About</a></li>
+          <li><a href="#" class="hover:text-fix-600">Trust & Safety</a></li>
+          <li><a href="#" class="hover:text-fix-600">Terms & Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-2">Get the app</h4>
+        <div class="flex gap-3">
+          <div class="h-12 w-36 bg-slate-200 rounded-xl"></div>
+          <div class="h-12 w-36 bg-slate-200 rounded-xl"></div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-slate-200 py-6 text-center text-slate-500 text-sm">© <span id="year"></span> Fix. All rights reserved.</div>
+  </footer>
+
+  <!-- Book Modal -->
   <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
     <div class="bg-white max-w-lg w-full rounded-2xl shadow-soft overflow-hidden">
       <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
@@ -172,12 +338,76 @@
     </div>
   </div>
 
-  <footer class="mt-10 border-t border-slate-800/60 py-6 text-center text-slate-300 text-sm">
-    © <span id="year"></span> Fix. All rights reserved.
-  </footer>
+  <!-- Post Request Modal -->
+  <div id="post-modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
+    <div class="bg-white max-w-xl w-full rounded-2xl shadow-soft overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-lg">Post a request</h3>
+        <button id="post-close" class="p-2 hover:bg-slate-100 rounded-lg">✕</button>
+      </div>
+      <form id="request-form" class="p-6 grid gap-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">What do you need?</label>
+          <input required id="req-title" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Elder care companion for 3 days"/>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium mb-1">Location</label>
+            <select required id="req-location" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"></select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Budget (LKR)</label>
+            <input required type="number" id="req-budget" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="15000"/>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium mb-1">Date</label>
+            <input required type="date" id="req-date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Contact</label>
+            <input required id="req-contact" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Your phone or email"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Details</label>
+          <textarea id="req-details" rows="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special needs or preferences"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 mt-2">
+          <button type="button" id="req-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+          <button class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">Post</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sign In Modal -->
+  <div id="login-modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-soft overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-lg">Sign in to Fix</h3>
+        <button id="login-close" class="p-2 hover:bg-slate-100 rounded-lg">✕</button>
+      </div>
+      <form id="login-form" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Your name</label>
+          <input id="login-name" required class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Jane Perera" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input id="login-email" required type="email" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="jane@example.com" />
+        </div>
+        <div class="flex justify-end gap-3 mt-2">
+          <button type="button" id="login-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+          <button class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">Sign in</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script>
-    // ---------------- DATA ----------------
+    // ------- Data layer -------
     const seedProviders = [
       {
         id: 'p1',
@@ -203,8 +433,7 @@
           '“Very reliable and professional caregiver.” – Dr. Fernando'
         ],
         photos: [
-          'https://placehold.co/600x360?text=Home+Care',
-          'https://placehold.co/600x360?text=Medication+Support'
+          'https://placehold.co/600x380?text=Elder+care+home+visit'
         ]
       },
       {
@@ -217,4 +446,938 @@
         verified: false,
         languages: 'Tamil, Sinhala',
         avatar: 'profile.jpg',
-        bio: 'Professional driver with clean record. Airport pickups and long-distance trips.',
+        bio: 'Professional driver with clean record. Airport pickups, day hires and long-distance trips.',
+        education: [
+          'Professional Driving License – Heavy & Light Vehicles',
+          'Defensive Driving Training – AA Sri Lanka'
+        ],
+        certificates: [
+          'Police Clearance – Clean Record',
+          'Tourist Transport Certificate – SLTDA'
+        ],
+        testimonials: [
+          '“Safe driver even in bad weather conditions.” – Jayasinghe Family'
+        ],
+        photos: [
+          'https://placehold.co/600x380?text=Airport+pickup'
+        ]
+      },
+      {
+        id: 'p3',
+        name: 'Ishara Perera',
+        category: 'Cleaning',
+        location: 'Colombo',
+        rate: 1200,
+        rating: 4.7,
+        verified: true,
+        languages: 'Sinhala',
+        avatar: 'profile.jpg',
+        bio: 'Deep-clean specialist for apartments and offices.',
+        education: [
+          'Housekeeping Course – VTA',
+          'Chemical Safety Workshop – Private Institute'
+        ],
+        certificates: [
+          'Safe Use of Cleaning Chemicals – VTA'
+        ],
+        testimonials: [
+          '“Our apartment is spotless after her visit.” – Mr. Silva'
+        ],
+        photos: [
+          'https://placehold.co/600x380?text=Apartment+deep+clean'
+        ]
+      },
+      {
+        id: 'p4',
+        name: 'Thushara Ranathunga',
+        category: 'Cooking',
+        location: 'Gampaha',
+        rate: 1500,
+        rating: 4.5,
+        verified: true,
+        languages: 'Sinhala',
+        avatar: 'profile.jpg',
+        bio: 'Sri Lankan home-cooked meals with vegetarian and custom diet options.',
+        education: [
+          'Cookery Certificate – SLITHM',
+          'Vegetarian Cuisine Training – Private Institute'
+        ],
+        certificates: [
+          'Food Safety & Hygiene – Ministry of Health'
+        ],
+        testimonials: [
+          '“Food was fresh, delicious, and hygienic.” – Karunaratne Family'
+        ],
+        photos: [
+          'https://placehold.co/600x380?text=Sri+Lankan+rice+and+curry'
+        ]
+      },
+      {
+        id: 'p6',
+        name: 'Dilini Fernando',
+        category: 'Babysitting',
+        location: 'Colombo',
+        rate: 2200,
+        rating: 4.9,
+        verified: true,
+        languages: 'Sinhala, English',
+        avatar: 'profile.jpg',
+        bio: 'Child-care specialist trained in early childhood development.',
+        education: [
+          'Diploma in Early Childhood Education',
+          'Short Course in Child Psychology'
+        ],
+        certificates: [
+          'CPR & First Aid for Children – Red Cross',
+          'Child Safety Training – NGO Programme'
+        ],
+        testimonials: [
+          '“She keeps kids engaged with creative activities.” – Mrs. Rodrigo'
+        ],
+        photos: [
+          'https://placehold.co/600x380?text=Kids+activities'
+        ]
+      },
+      {
+        id: 'p8',
+        name: 'Ahamed Rizvi',
+        category: 'Event staff',
+        location: 'Matara',
+        rate: 1700,
+        rating: 4.3,
+        verified: true,
+        languages: 'Sinhala, English',
+        avatar: 'profile.jpg',
+        bio: 'Event waiter and setup crew for weddings and corporate functions.',
+        education: [
+          'Event Assistant Course – Vocational Institute'
+        ],
+        certificates: [
+          'Food Handling Certificate – Ministry of Health',
+          'Event Safety Basics Workshop'
+        ],
+        testimonials: [
+          '“Our wedding ran very smoothly thanks to Ahamed.” – Nadeesha & Nalin'
+        ],
+        photos: [
+          'https://placehold.co/600x380?text=Wedding+buffet+setup'
+        ]
+      }
+    ];
+
+    const db = {
+      load() {
+        let data;
+        try {
+          data = JSON.parse(localStorage.getItem('fix-db') || '{}');
+        } catch {
+          data = {};
+        }
+        if (!data.providers) data.providers = seedProviders;
+        if (!data.bookings) data.bookings = [];
+        localStorage.setItem('fix-db', JSON.stringify(data));
+        return data;
+      },
+      save(data) {
+        localStorage.setItem('fix-db', JSON.stringify(data));
+      }
+    };
+
+    let state = db.load();
+    const $ = (s) => document.querySelector(s);
+    const fmt = (n) => new Intl.NumberFormat('en-LK').format(n);
+
+    // ------- Booking modal -------
+    function closeModal() {
+      const modal = $('#modal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openBookModal(pid) {
+      const p = (state.providers || []).find((x) => x.id === pid);
+      if (!p) return;
+
+      const modal = $('#modal');
+      const body = $('#modal-body');
+
+      body.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <a href="profile.html?id=${p.id}" class="shrink-0">
+              <img 
+                src="${p.avatar}" 
+                onerror="this.src='profile.jpg';"
+                class="w-12 h-12 rounded-full object-contain bg-white border border-slate-300 p-1"
+              />
+            </a>
+            <div>
+              <div class="text-sm text-slate-600">Provider</div>
+              <h4 class="font-bold text-lg">
+                <a href="profile.html?id=${p.id}" class="text-fix-600 hover:underline">
+                  ${p.name}
+                </a>
+              </h4>
+              <div class="text-slate-600 text-sm">${p.category} • ${p.location}</div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium mb-1">Date</label>
+              <input id="bk-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Hours</label>
+              <input id="bk-hours" type="number" min="1" value="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200"/>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Address</label>
+            <input id="bk-address" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="123, Flower Rd, Colombo 7"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Notes</label>
+            <textarea id="bk-notes" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Any special instructions"></textarea>
+          </div>
+
+          <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+            <div>Rate: <span class="font-semibold">LKR ${fmt(p.rate)}/hr</span></div>
+            <div id="bk-total" class="text-lg font-extrabold">Total: LKR ${fmt(p.rate * 3)}</div>
+          </div>
+
+          <div class="flex justify-end gap-3">
+            <button id="bk-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+            <button id="bk-confirm" class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600">Confirm booking</button>
+          </div>
+        </div>
+      `;
+
+      const hoursInput = $('#bk-hours');
+      const totalEl = $('#bk-total');
+
+      hoursInput.addEventListener('input', () => {
+        const h = Math.max(1, Number(hoursInput.value || 1));
+        totalEl.textContent = `Total: LKR ${fmt(p.rate * h)}`;
+      });
+
+      $('#bk-cancel').onclick = closeModal;
+
+      $('#bk-confirm').onclick = () => {
+        const dateVal = $('#bk-date').value;
+        if (!dateVal) {
+          alert('Please select a date for your booking.');
+          return;
+        }
+
+        const hours = Math.max(1, Number(hoursInput.value || 1));
+        const booking = {
+          id: 'b' + Date.now(),
+          providerId: p.id,
+          providerName: p.name,
+          category: p.category,
+          date: dateVal,
+          hours,
+          address: $('#bk-address').value,
+          notes: $('#bk-notes').value,
+          rate: p.rate,
+          total: p.rate * hours,
+          status: 'Confirmed'
+        };
+
+        state.bookings.unshift(booking);
+        db.save(state);
+        renderBookings();
+        updateNotifyBadge();
+        closeModal();
+
+        const toast = document.createElement('div');
+        toast.textContent = '✅ Booking confirmed successfully!';
+        toast.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+      };
+
+      $('#modal-close').onclick = closeModal;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    // ------- Browse tiles -------
+    function renderBrowseTiles() {
+      const container = $('#browse-tiles');
+      if (!container) return;
+
+      let providers = [...(state.providers || [])];
+
+      // Filters
+      const catVal = $('#filter-category')?.value || '';
+      const locVal = $('#filter-location')?.value || '';
+      const sortVal = $('#sort-by')?.value || 'top';
+
+      if (catVal) providers = providers.filter((p) => p.category === catVal);
+      if (locVal) providers = providers.filter((p) => p.location === locVal);
+
+      if (sortVal === 'price-asc') {
+        providers.sort((a, b) => a.rate - b.rate);
+      } else if (sortVal === 'price-desc') {
+        providers.sort((a, b) => b.rate - a.rate);
+      } else {
+        providers.sort((a, b) => b.rating - a.rating);
+      }
+
+      if (!providers.length) {
+        container.innerHTML = `<div class="text-slate-200 col-span-full">No providers match these filters.</div>`;
+        return;
+      }
+
+      container.innerHTML = providers
+        .map(
+          (p) => `
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex gap-3">
+                <a href="profile.html?id=${p.id}" class="shrink-0">
+                  <img 
+                    src="${p.avatar}" 
+                    onerror="this.src='profile.jpg';"
+                    class="w-12 h-12 rounded-full object-contain bg-white border border-slate-300 p-1"
+                  />
+                </a>
+                <div>
+                  <h3 class="text-lg font-bold">
+                    <a href="profile.html?id=${p.id}" class="text-fix-600 hover:underline">
+                      ${p.name}
+                    </a>
+                  </h3>
+                  <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
+                  <div class="mt-2 flex items-center gap-2 text-sm">
+                    <span class="text-yellow-500">★★★★★</span>
+                    <span class="text-slate-600">${p.rating}</span>
+                    ${p.verified ? '<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">Verified</span>' : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
+                <div class="text-sm text-slate-600">per hour</div>
+              </div>
+            </div>
+            <p class="mt-3 text-slate-700">${p.bio}</p>
+            <div class="mt-4 flex justify-between items-center">
+              <button class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600" data-book="${p.id}">Book</button>
+              <a href="profile.html?id=${p.id}" class="text-sm text-fix-600 hover:underline">View profile →</a>
+            </div>
+          </div>
+        `
+        )
+        .join('');
+
+      container.querySelectorAll('[data-book]').forEach((btn) => {
+        btn.addEventListener('click', () => openBookModal(btn.dataset.book));
+      });
+    }
+
+    // ------- Bookings list -------
+    function renderBookings() {
+      const list = $('#bookings-list');
+      if (!list) return;
+
+      const bookings = state.bookings || [];
+      if (!bookings.length) {
+        list.innerHTML = `<div class="text-slate-200">No bookings yet. Book a provider to see it here.</div>`;
+        return;
+      }
+
+      list.innerHTML = bookings
+        .map(
+          (b) => `
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="text-lg font-bold">
+                <a href="profile.html?id=${b.providerId}" class="text-fix-600 hover:underline">
+                  ${b.providerName}
+                </a>
+              </h3>
+              <div class="text-slate-600">${b.category}</div>
+              <div class="text-slate-500 text-sm">${b.date} • ${b.hours}h</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xl font-extrabold">LKR ${fmt(b.total)}</div>
+              <div class="text-sm text-slate-600">${b.status}</div>
+            </div>
+          </div>
+          <p class="mt-3 text-slate-700">${b.address || ''}</p>
+          ${b.notes ? `<p class="mt-2 text-slate-500 text-sm">“${b.notes}”</p>` : ''}
+          <div class="mt-4 text-right">
+            <button data-cancel="${b.id}" class="text-sm text-red-600 hover:text-red-800 font-medium">Cancel booking</button>
+          </div>
+        </div>
+      `
+        )
+        .join('');
+
+      list.querySelectorAll('[data-cancel]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.cancel;
+          if (confirm('Are you sure you want to cancel this booking?')) {
+            state.bookings = (state.bookings || []).filter((b) => b.id !== id);
+            db.save(state);
+            renderBookings();
+            updateNotifyBadge();
+          }
+        });
+      });
+    }
+
+    // ------- Notifications -------
+    function getUpcomingBookings(days = 14) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const ahead = new Date();
+      ahead.setDate(today.getDate() + days);
+      ahead.setHours(23, 59, 59, 999);
+
+      return (state.bookings || [])
+        .filter((b) => b.status !== 'Cancelled' && b.date)
+        .map((b) => ({ ...b, dateObj: new Date(b.date) }))
+        .filter((b) => !isNaN(b.dateObj) && b.dateObj >= today && b.dateObj <= ahead)
+        .sort((a, b) => a.dateObj - b.dateObj);
+    }
+
+    function updateNotifyBadge() {
+      const badge = $('#notify-badge');
+      if (!badge) return;
+      const n = getUpcomingBookings().length;
+      badge.textContent = n;
+      badge.classList.toggle('hidden', n === 0);
+    }
+
+    function renderNotifyPanel() {
+      const list = $('#notify-list');
+      if (!list) return;
+      const upcoming = getUpcomingBookings(14);
+
+      if (upcoming.length === 0) {
+        list.innerHTML = `
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-600">
+            No upcoming bookings. Once you confirm a booking, reminders will appear here.
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = upcoming
+        .map(
+          (b) => `
+        <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm space-y-1">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold text-slate-900">
+              ${b.category} with ${b.providerName}
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">upcoming</span>
+          </div>
+          <div class="text-slate-600">
+            ${b.date} • ${b.hours}h
+          </div>
+          <div class="text-xs text-slate-500">
+            Total: LKR ${fmt(b.total)}
+          </div>
+        </div>
+      `
+        )
+        .join('');
+    }
+
+    // ------- Requests -------
+    function initRequests() {
+      const btnPost = $('#btn-post');
+      const btnPost2 = $('#btn-post-2');
+      const postModal = $('#post-modal');
+      const postClose = $('#post-close');
+      const reqCancel = $('#req-cancel');
+      const reqForm = $('#request-form');
+      const reqList = $('#requests-list');
+
+      let requests;
+      try {
+        requests = JSON.parse(localStorage.getItem('fix-requests') || '[]');
+      } catch {
+        requests = [];
+      }
+
+      function renderRequests() {
+        if (!reqList) return;
+        if (!requests.length) {
+          reqList.innerHTML = `<div class="text-slate-200">No open requests yet. Post one to get offers.</div>`;
+          return;
+        }
+
+        reqList.innerHTML = requests
+          .map(
+            (r) => `
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-lg font-bold">${r.title}</h3>
+                <div class="text-slate-600">${r.location}</div>
+                <div class="text-slate-500 text-sm">${r.date}</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-extrabold">LKR ${fmt(r.budget)}</div>
+              </div>
+            </div>
+            <p class="mt-3 text-slate-700">${r.details}</p>
+            <p class="mt-2 text-slate-500 text-sm">Contact: ${r.contact}</p>
+            <div class="mt-4 text-right">
+              <button data-cancel-req="${r.id}" class="text-sm text-red-600 hover:text-red-800 font-medium">Cancel request</button>
+            </div>
+          </div>
+        `
+          )
+          .join('');
+
+        reqList.querySelectorAll('[data-cancel-req]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.cancelReq;
+            if (confirm('Are you sure you want to cancel this request?')) {
+              requests = requests.filter((r) => r.id !== id);
+              localStorage.setItem('fix-requests', JSON.stringify(requests));
+              renderRequests();
+
+              const toast = document.createElement('div');
+              toast.textContent = '❌ Request cancelled.';
+              toast.className = 'fixed bottom-6 right-6 bg-red-500 text-white px-5 py-3 rounded-xl shadow-soft';
+              document.body.appendChild(toast);
+              setTimeout(() => toast.remove(), 2500);
+            }
+          });
+        });
+      }
+
+      function openPostModal() {
+        postModal.classList.remove('hidden');
+        postModal.classList.add('flex');
+      }
+
+      function closePostModal() {
+        postModal.classList.add('hidden');
+        postModal.classList.remove('flex');
+        reqForm?.reset();
+      }
+
+      btnPost?.addEventListener('click', openPostModal);
+      btnPost2?.addEventListener('click', openPostModal);
+      postClose?.addEventListener('click', closePostModal);
+      reqCancel?.addEventListener('click', closePostModal);
+
+      reqForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const newRequest = {
+          id: 'r' + Date.now(),
+          title: $('#req-title').value.trim(),
+          location: $('#req-location').value,
+          budget: Number($('#req-budget').value),
+          date: $('#req-date').value,
+          contact: $('#req-contact').value.trim(),
+          details: $('#req-details').value.trim()
+        };
+
+        requests.unshift(newRequest);
+        localStorage.setItem('fix-requests', JSON.stringify(requests));
+
+        renderRequests();
+        closePostModal();
+
+        const toast = document.createElement('div');
+        toast.textContent = '✅ Request posted successfully!';
+        toast.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+      });
+
+      renderRequests();
+    }
+
+    // ------- Emergency search -------
+    function initEmergencySearch() {
+      const form = $('#emergency-form');
+      const results = $('#emergency-results');
+
+      form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const service = $('#emg-service').value.trim().toLowerCase();
+        const location = $('#emg-location').value.trim().toLowerCase();
+
+        const matches = (state.providers || []).filter((p) => {
+          const matchService =
+            !service ||
+            p.category.toLowerCase().includes(service) ||
+            p.name.toLowerCase().includes(service);
+          const matchLocation = !location || p.location.toLowerCase().includes(location);
+          return matchService && matchLocation;
+        });
+
+        if (!matches.length) {
+          results.innerHTML = `<div class="text-white/80 col-span-full">No emergency providers available at this moment.</div>`;
+          return;
+        }
+
+        results.innerHTML = matches
+          .map(
+            (p) => `
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex gap-3">
+                <a href="profile.html?id=${p.id}" class="shrink-0">
+                  <img 
+                    src="${p.avatar}" 
+                    onerror="this.src='profile.jpg';"
+                    class="w-12 h-12 rounded-full object-contain bg-white border border-slate-300 p-1"
+                  />
+                </a>
+                <div>
+                  <h3 class="text-lg font-bold">
+                    <a href="profile.html?id=${p.id}" class="text-fix-600 hover:underline">
+                      ${p.name}
+                    </a>
+                  </h3>
+                  <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
+                  <div class="mt-2 flex items-center gap-2 text-sm">
+                    <span class="text-yellow-500">★★★★★</span>
+                    <span class="text-slate-600">${p.rating}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
+                <div class="text-sm text-slate-600">per hour</div>
+              </div>
+            </div>
+            <p class="mt-3 text-slate-700">${p.bio}</p>
+            <div class="mt-4">
+              <button class="px-4 py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600" data-book="${p.id}">Book Now</button>
+            </div>
+          </div>
+        `
+          )
+          .join('');
+
+        results.querySelectorAll('[data-book]').forEach((btn) => {
+          btn.addEventListener('click', () => openBookModal(btn.dataset.book));
+        });
+
+        results.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    // ------- Search -------
+    function initSearch() {
+      const form = $('#search-form');
+      const resultsGrid = $('#providers-grid');
+      const browseTiles = $('#browse-tiles');
+
+      form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const service = $('#q-service').value.trim().toLowerCase();
+        const location = $('#q-location').value.trim().toLowerCase();
+
+        const matches = (state.providers || []).filter((p) => {
+          const matchService =
+            !service ||
+            p.category.toLowerCase().includes(service) ||
+            p.name.toLowerCase().includes(service);
+          const matchLocation = !location || p.location.toLowerCase().includes(location);
+          return matchService && matchLocation;
+        });
+
+        browseTiles.classList.add('hidden');
+
+        if (!matches.length) {
+          resultsGrid.innerHTML = `<div class="text-white/80 col-span-full">No providers found for your search.</div>`;
+        } else {
+          resultsGrid.innerHTML = matches
+            .map(
+              (p) => `
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex gap-3">
+                  <a href="profile.html?id=${p.id}" class="shrink-0">
+                    <img 
+                      src="${p.avatar}" 
+                      onerror="this.src='profile.jpg';"
+                      class="w-12 h-12 rounded-full object-contain bg-white border border-slate-300 p-1"
+                    />
+                  </a>
+                  <div>
+                    <h3 class="text-lg font-bold">
+                      <a href="profile.html?id=${p.id}" class="text-fix-600 hover:underline">
+                        ${p.name}
+                      </a>
+                    </h3>
+                    <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
+                    <div class="mt-2 flex items-center gap-2 text-sm">
+                      <span class="text-yellow-500">★★★★★</span>
+                      <span class="text-slate-600">${p.rating}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
+                  <div class="text-sm text-slate-600">per hour</div>
+                </div>
+              </div>
+              <p class="mt-3 text-slate-700">${p.bio}</p>
+              <div class="mt-4 flex justify-between items-center">
+                <button class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600" data-book="${p.id}">Book</button>
+                <a href="profile.html?id=${p.id}" class="text-sm text-fix-600 hover:underline">View profile →</a>
+              </div>
+            </div>
+          `
+            )
+            .join('');
+
+          resultsGrid.querySelectorAll('[data-book]').forEach((btn) => {
+            btn.addEventListener('click', () => openBookModal(btn.dataset.book));
+          });
+        }
+
+        $('#browse').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      $('#clear-browse')?.addEventListener('click', () => {
+        resultsGrid.innerHTML = '';
+        browseTiles.classList.remove('hidden');
+        $('#q-service').value = '';
+        $('#q-location').value = '';
+        $('#q-date').value = '';
+        $('#filter-category').value = '';
+        $('#filter-location').value = '';
+        $('#sort-by').value = 'top';
+        renderBrowseTiles();
+      });
+    }
+
+    // ------- Become a Pro dropdowns + request locations -------
+    function populateDropdowns() {
+      const catSelect = $('#pro-category');
+      const locSelect = $('#pro-location');
+      const reqLoc = $('#req-location');
+
+      const categories = [...new Set((state.providers || []).map((p) => p.category))].sort();
+      const locations = [...new Set((state.providers || []).map((p) => p.location))].sort();
+      const fallbackLocations = ['Colombo', 'Gampaha', 'Kandy', 'Galle', 'Matara', 'Jaffna', 'Negombo', 'Kalutara'];
+
+      if (catSelect) {
+        catSelect.innerHTML =
+          `<option value="">Select category</option>` +
+          categories.map((c) => `<option value="${c}">${c}</option>`).join('');
+      }
+
+      if (locSelect) {
+        locSelect.innerHTML =
+          `<option value="">Select location</option>` +
+          locations.map((l) => `<option value="${l}">${l}</option>`).join('');
+      }
+
+      if (reqLoc) {
+        const list = locations.length ? locations : fallbackLocations;
+        reqLoc.innerHTML =
+          `<option value="" disabled selected>Select location</option>` +
+          list.map((l) => `<option value="${l}">${l}</option>`).join('');
+      }
+    }
+
+    // ------- Become a Pro submit (adds to list only locally) -------
+    function initProForm() {
+      const form = $('#pro-form');
+      form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const newProvider = {
+          id: 'p' + (Date.now().toString(36)),
+          name: $('#pro-name').value.trim(),
+          category: $('#pro-category').value,
+          location: $('#pro-location').value,
+          rate: Number($('#pro-rate').value),
+          rating: 5.0,
+          verified: $('#pro-verified').checked,
+          languages: $('#pro-languages').value || 'Sinhala',
+          avatar: 'profile.jpg',
+          bio: $('#pro-bio').value.trim() || 'Newly added professional on Fix.',
+          education: [],
+          certificates: [],
+          testimonials: [],
+          photos: []
+        };
+
+        state.providers.push(newProvider);
+        db.save(state);
+        populateDropdowns();
+        renderBrowseTiles();
+
+        form.reset();
+
+        const toast = document.createElement('div');
+        toast.textContent = '✅ Profile created (locally) and added to browse list.';
+        toast.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+      });
+    }
+
+    // ------- Login modal -------
+    function initLogin() {
+      const loginBtn = $('#btn-login');
+      const loginModal = $('#login-modal');
+      const loginForm = $('#login-form');
+      const loginClose = $('#login-close');
+      const loginCancel = $('#login-cancel');
+
+      function updateNavbar() {
+        let user = null;
+        try {
+          user = JSON.parse(localStorage.getItem('fix-user')) || null;
+        } catch {}
+        if (!loginBtn) return user;
+
+        if (user && user.name) {
+          loginBtn.textContent = `Hi, ${user.name.split(' ')[0]}!`;
+          loginBtn.classList.remove('bg-white', 'text-fix-700');
+          loginBtn.classList.add('bg-fix-600', 'text-white', 'cursor-default');
+          loginBtn.disabled = true;
+        } else {
+          loginBtn.textContent = 'Sign in';
+          loginBtn.classList.remove('bg-fix-600', 'text-white', 'cursor-default');
+          loginBtn.classList.add('bg-white', 'text-fix-700');
+          loginBtn.disabled = false;
+        }
+        return user;
+      }
+
+      function openLogin() {
+        if (!loginModal) return;
+        loginModal.classList.remove('hidden');
+        loginModal.classList.add('flex');
+      }
+
+      function closeLogin() {
+        if (!loginModal) return;
+        loginModal.classList.add('hidden');
+        loginModal.classList.remove('flex');
+        loginForm?.reset();
+      }
+
+      function toast(msg) {
+        const el = document.createElement('div');
+        el.textContent = msg;
+        el.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
+      }
+
+      let user = updateNavbar();
+
+      loginBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        user = updateNavbar();
+        if (!user) openLogin();
+      });
+
+      loginClose?.addEventListener('click', closeLogin);
+      loginCancel?.addEventListener('click', closeLogin);
+      loginModal?.addEventListener('click', (e) => {
+        if (e.target === loginModal) closeLogin();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLogin();
+      });
+
+      loginForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = $('#login-name')?.value.trim();
+        const email = $('#login-email')?.value.trim();
+        if (!name || !email) return;
+        localStorage.setItem('fix-user', JSON.stringify({ name, email }));
+        closeLogin();
+        updateNavbar();
+        toast(`✅ Welcome, ${name}!`);
+      });
+    }
+
+    // ------- Navigation smooth scroll -------
+    function initSmoothScroll() {
+      const navLinks = document.querySelectorAll('nav a[href^="#"]');
+      navLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1);
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    }
+
+    // ------- Notifications toggle -------
+    function initNotifyUI() {
+      const notifyBtn = $('#notify-btn-nav');
+      const notifyPanel = $('#notify-panel');
+      const notifyClose = $('#notify-close');
+      const wrapper = $('#notify-wrapper');
+
+      function togglePanel() {
+        renderNotifyPanel();
+        notifyPanel.classList.toggle('hidden');
+      }
+
+      function hidePanel() {
+        notifyPanel.classList.add('hidden');
+      }
+
+      notifyBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePanel();
+      });
+
+      notifyClose?.addEventListener('click', (e) => {
+        e.preventDefault();
+        hidePanel();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (wrapper && !wrapper.contains(e.target)) hidePanel();
+      });
+    }
+
+    // ------- Init -------
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      populateDropdowns();
+      renderBrowseTiles();
+      renderBookings();
+      updateNotifyBadge();
+
+      initSearch();
+      initRequests();
+      initEmergencySearch();
+      initProForm();
+      initLogin();
+      initSmoothScroll();
+      initNotifyUI();
+
+      // re-render browse when filters change
+      $('#filter-category')?.addEventListener('change', renderBrowseTiles);
+      $('#filter-location')?.addEventListener('change', renderBrowseTiles);
+      $('#sort-by')?.addEventListener('change', renderBrowseTiles);
+    });
+  </script>
+</body>
+</html>
