@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fix — Provider profile</title>
-  <meta name="description" content="Fix service provider profile page." />
+  <title>Fix — Service Provider Profile</title>
+  <meta name="description" content="Fix provider portfolio page" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -30,17 +30,18 @@
   </script>
   <style>
     html, body { height:100%; }
+    .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,.7); }
     .clip-blob { clip-path: path('M40 0C68 0 90 18 100 45c10 27 5 54-12 72S47 139 25 130 0 98 0 70 12 0 40 0z'); }
   </style>
 </head>
 <body class="text-slate-800 font-sans">
-  <!-- Full-page background gradient (same style as index.html) -->
+  <!-- Full-page background gradient -->
   <div class="fixed inset-0 -z-50">
     <div class="absolute inset-0 bg-gradient-to-br from-[#4EC67E] via-[#1F6D47] to-[#0B3E29]"></div>
     <div class="absolute inset-0 bg-[radial-gradient(60%_80%_at_70%_10%,rgba(255,255,255,0.18),transparent_60%)]"></div>
   </div>
 
-  <!-- Header / Top Bar (copied style from index.html) -->
+  <!-- Header (same style as index, but links go back to index.html) -->
   <header class="relative">
     <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#4EC67E] via-[#1F6D47] to-[#0B3E29] opacity-95"></div>
     <div class="absolute right-[-80px] top-[-80px] w-[280px] h-[280px] clip-blob bg-white/10"></div>
@@ -64,29 +65,146 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <a href="index.html" class="px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">Back to home</a>
+        <button id="btn-login" class="hidden md:inline-flex px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">
+          Sign in
+        </button>
+
+        <!-- Bell + popover -->
+        <div id="notify-wrapper" class="relative">
+          <button
+            id="notify-btn-nav"
+            class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
+            aria-label="Notifications"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+            </svg>
+            <span
+              id="notify-badge"
+              class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center hidden"
+            >
+              0
+            </span>
+          </button>
+
+          <div
+            id="notify-panel"
+            class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-soft border border-slate-200 z-50"
+          >
+            <div class="p-3 border-b border-slate-100">
+              <div class="font-semibold text-slate-900">Notifications</div>
+              <div class="text-xs text-slate-500">Upcoming bookings (next 14 days)</div>
+            </div>
+            <div id="notify-list" class="p-3 space-y-2 max-h-80 overflow-auto"></div>
+            <div class="p-2 border-t border-slate-100 text-right">
+              <button id="notify-close" class="text-sm text-slate-600 hover:text-slate-800">Close</button>
+            </div>
+          </div>
+        </div>
+
+        <a
+          href="index.html#browse"
+          id="btn-post"
+          class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold shadow-soft hover:bg-fix-700"
+        >
+          Post a Request
+        </a>
       </div>
     </nav>
   </header>
 
   <!-- Main Profile Content -->
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <section id="profile-root" class="space-y-8">
-      <!-- Filled by JavaScript -->
-    </section>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div id="profile-root" class="mt-6"></div>
   </main>
 
-  <!-- Simple footer strip -->
-  <footer class="border-t border-slate-200 bg-white/90 mt-10">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center text-sm text-slate-500">
-      <span>© <span id="year"></span> Fix.</span>
-      <a href="index.html" class="text-fix-600 hover:underline">Go back to main app →</a>
+  <!-- Footer -->
+  <footer class="mt-20 border-t border-slate-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-fix-500"></div>
+          <div class="text-xl font-extrabold">Fix</div>
+        </div>
+        <p class="text-slate-600 mt-3">A hyperlocal marketplace for trusted human services. Built for Sri Lanka.</p>
+      </div>
+      <div>
+        <h4 class="font-bold mb-2">Explore</h4>
+        <ul class="space-y-1 text-slate-600">
+          <li><a href="index.html#browse" class="hover:text-fix-600">Browse providers</a></li>
+          <li><a href="index.html#requests" class="hover:text-fix-600">Open requests</a></li>
+          <li><a href="index.html#become-pro" class="hover:text-fix-600">Become a pro</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-2">Company</h4>
+        <ul class="space-y-1 text-slate-600">
+          <li><a href="#" class="hover:text-fix-600">About</a></li>
+          <li><a href="#" class="hover:text-fix-600">Trust & Safety</a></li>
+          <li><a href="#" class="hover:text-fix-600">Terms & Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-2">Get the app</h4>
+        <div class="flex gap-3">
+          <div class="h-12 w-36 bg-slate-200 rounded-xl"></div>
+          <div class="h-12 w-36 bg-slate-200 rounded-xl"></div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-slate-200 py-6 text-center text-slate-500 text-sm">
+      © <span id="year"></span> Fix. All rights reserved.
     </div>
   </footer>
 
+  <!-- Sign In Modal (reused from index) -->
+  <div id="login-modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-soft overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-lg">Sign in to Fix</h3>
+        <button id="login-close" class="p-2 hover:bg-slate-100 rounded-lg">✕</button>
+      </div>
+      <form id="login-form" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Your name</label>
+          <input id="login-name" required class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="Jane Perera" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input id="login-email" required type="email" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200" placeholder="jane@example.com" />
+        </div>
+        <div class="flex justify-end gap-3 mt-2">
+          <button type="button" id="login-cancel" class="px-4 py-2 rounded-xl bg-slate-100">Cancel</button>
+          <button class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">Sign in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // Same base providers as index.html (ids must match)
-    const providers = [
+    // --------- Minimal shared DB for notifications (bookings only) ----------
+    const db = {
+      load() {
+        let data;
+        try {
+          data = JSON.parse(localStorage.getItem('fix-db') || '{}');
+        } catch {
+          data = {};
+        }
+        if (!data.bookings) data.bookings = [];
+        if (!data.providers) data.providers = [];
+        localStorage.setItem('fix-db', JSON.stringify(data));
+        return data;
+      },
+      save(data) {
+        localStorage.setItem('fix-db', JSON.stringify(data));
+      }
+    };
+
+    let state = db.load();
+
+    // Fallback providers in case profile page is opened directly
+    const fallbackProviders = [
       {
         id: 'p1',
         name: 'Nimali Jayasinghe',
@@ -105,6 +223,10 @@
         certificates: [
           'First Aid & CPR – Red Cross Sri Lanka',
           'Elder Care Specialisation – Private Hospital Colombo'
+        ],
+        certificatePhotos: [
+          'https://placehold.co/400x260?text=First+Aid+Certificate',
+          'https://placehold.co/400x260?text=Elder+Care+Certificate'
         ],
         testimonials: [
           '“She cared for my mother with patience and kindness.” – Mrs. Perera',
@@ -126,18 +248,22 @@
         avatar: 'profile.jpg',
         bio: 'Experienced electrician specialising in household wiring, power troubleshooting, lighting installation, and small appliance repairs.',
         education: [
-          'NVQ Level 4 in Electrical and Electronic Technology – VTA',
-          'Apprenticeship in Domestic Electrical Work – Kandy'
+          'National Vocational Qualification in Electrical Work',
+          'Safety Practices in Domestic Wiring – VTA'
         ],
         certificates: [
-          'Government Approved Wireman License',
-          'Electrical Safety & PPE Training – OSH Sri Lanka'
+          'Electrical Safety Certification',
+          'Low Voltage Installation Training'
+        ],
+        certificatePhotos: [
+          'https://placehold.co/400x260?text=Electrical+Safety+Certificate',
+          'https://placehold.co/400x260?text=LV+Installation+Certificate'
         ],
         testimonials: [
-          '“Fixed our house wiring issues quickly and safely.” – Jayasinghe Family'
+          '“Quick to respond and very neat work.” – Jayasinghe Family'
         ],
         photos: [
-          'https://placehold.co/600x380?text=Electrical+panel+work'
+          'https://placehold.co/600x380?text=House+rewiring+project'
         ]
       },
       {
@@ -157,6 +283,9 @@
         ],
         certificates: [
           'Safe Use of Cleaning Chemicals – VTA'
+        ],
+        certificatePhotos: [
+          'https://placehold.co/400x260?text=Cleaning+Chemicals+Certificate'
         ],
         testimonials: [
           '“Our apartment is spotless after her visit.” – Mr. Silva'
@@ -182,6 +311,9 @@
         ],
         certificates: [
           'Food Safety & Hygiene – Ministry of Health'
+        ],
+        certificatePhotos: [
+          'https://placehold.co/400x260?text=Food+Safety+Certificate'
         ],
         testimonials: [
           '“Food was fresh, delicious, and hygienic.” – Karunaratne Family'
@@ -209,6 +341,10 @@
           'CPR & First Aid for Children – Red Cross',
           'Child Safety Training – NGO Programme'
         ],
+        certificatePhotos: [
+          'https://placehold.co/400x260?text=Child+CPR+Certificate',
+          'https://placehold.co/400x260?text=Child+Safety+Training'
+        ],
         testimonials: [
           '“She keeps kids engaged with creative activities.” – Mrs. Rodrigo'
         ],
@@ -234,6 +370,10 @@
           'Food Handling Certificate – Ministry of Health',
           'Event Safety Basics Workshop'
         ],
+        certificatePhotos: [
+          'https://placehold.co/400x260?text=Food+Handling+Certificate',
+          'https://placehold.co/400x260?text=Event+Safety+Workshop'
+        ],
         testimonials: [
           '“Our wedding ran very smoothly thanks to Ahamed.” – Nadeesha & Nalin'
         ],
@@ -243,170 +383,376 @@
       }
     ];
 
-    function fmt(n) {
-      return new Intl.NumberFormat('en-LK').format(n);
+    const $ = (s) => document.querySelector(s);
+    const fmt = (n) => new Intl.NumberFormat('en-LK').format(n);
+
+    function getProviderFromStateOrFallback(id) {
+      const fromDb = (state.providers || []).find(p => p.id === id);
+      if (fromDb) return fromDb;
+      return fallbackProviders.find(p => p.id === id) || fallbackProviders[0];
     }
 
     function renderProfile() {
+      const root = $('#profile-root');
+      if (!root) return;
+
       const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
-      const root = document.getElementById('profile-root');
-      document.getElementById('year').textContent = new Date().getFullYear();
+      const id = params.get('id') || 'p1';
+      const p = getProviderFromStateOrFallback(id);
 
-      const p = providers.find(x => x.id === id) || providers[0];
+      const stars = '★★★★★';
 
-      if (!p) {
-        root.innerHTML = `
-          <div class="bg-white/90 rounded-2xl p-8 shadow-soft text-center">
-            <h1 class="text-2xl font-extrabold text-slate-900 mb-2">Provider not found</h1>
-            <p class="text-slate-600 mb-4">The profile you are looking for does not exist.</p>
-            <a href="index.html#browse" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700 inline-block">Go back to browse</a>
+      const educationHTML = (p.education || [])
+        .map(item => `<li class="flex gap-2"><span class="text-fix-500 mt-1">•</span><span>${item}</span></li>`)
+        .join('');
+
+      const certificatesHTML = (p.certificates || [])
+        .map(item => `<li class="flex gap-2"><span class="text-fix-500 mt-1">•</span><span>${item}</span></li>`)
+        .join('');
+
+      const certificatePhotosHTML = (p.certificatePhotos || [])
+        .map(src => `
+          <div class="bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+            <img src="${src}" class="w-full h-40 object-cover" alt="Certificate" />
+          </div>
+        `)
+        .join('');
+
+      const testimonialsHTML = (p.testimonials || [])
+        .map(t => `<li class="border-l-4 border-fix-400 pl-3 text-slate-700 text-sm">${t}</li>`)
+        .join('');
+
+      const galleryHTML = (p.photos || [])
+        .map(src => `
+          <div class="bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+            <img src="${src}" class="w-full h-44 object-cover" alt="Work photo" />
+          </div>
+        `)
+        .join('');
+
+      root.innerHTML = `
+        <div class="bg-white/90 rounded-3xl shadow-soft px-6 sm:px-10 py-8 mb-10">
+          <div class="flex flex-col md:flex-row md:items-center gap-6">
+            <div class="relative shrink-0">
+              <div class="w-28 h-28 rounded-full bg-white border-4 border-emerald-100 flex items-center justify-center overflow-hidden shadow-soft">
+                <img
+                  src="${p.avatar || 'profile.jpg'}"
+                  onerror="this.src='profile.jpg';"
+                  class="w-full h-full object-cover"
+                  alt="${p.name}"
+                />
+              </div>
+              ${p.verified ? `
+                <div class="absolute -bottom-1 -right-1 bg-emerald-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-soft">
+                  <span>✔</span><span>Verified</span>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="flex-1">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">${p.name}</h1>
+                  <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
+                  <div class="mt-2 flex flex-wrap items-center gap-3 text-sm">
+                    <div class="flex items-center gap-1">
+                      <span class="text-yellow-500">${stars}</span>
+                      <span class="text-slate-700">${p.rating?.toFixed ? p.rating.toFixed(1) : p.rating}</span>
+                    </div>
+                    <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">
+                      LKR ${fmt(p.rate)} / hour
+                    </span>
+                    ${p.languages ? `
+                      <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700">
+                        ${p.languages}
+                      </span>
+                    ` : ''}
+                  </div>
+                </div>
+                <div class="flex flex-col items-end gap-2">
+                  <a
+                    href="index.html#browse"
+                    class="px-4 py-2 rounded-xl bg-fix-600 text-white text-sm font-semibold shadow-soft hover:bg-fix-700"
+                  >
+                    Book via Fix
+                  </a>
+                  <button
+                    class="text-xs text-white/80 underline"
+                    onclick="window.history.back()"
+                  >
+                    ← Back
+                  </button>
+                </div>
+              </div>
+
+              <p class="mt-4 text-slate-700 text-sm sm:text-base">
+                ${p.bio || 'Professional service provider on Fix.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8 mb-12">
+          <!-- Left column -->
+          <div class="lg:col-span-2 space-y-8">
+            <section class="bg-white/95 rounded-3xl shadow-soft p-6">
+              <h2 class="text-lg font-bold text-slate-900 mb-3">About & Experience</h2>
+              <p class="text-slate-700 text-sm sm:text-base">
+                ${p.bio || 'Details coming soon.'}
+              </p>
+            </section>
+
+            <section class="bg-white/95 rounded-3xl shadow-soft p-6 grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-base font-semibold text-slate-900 mb-2">Education & Training</h3>
+                ${educationHTML
+                  ? `<ul class="space-y-1 text-sm text-slate-700">${educationHTML}</ul>`
+                  : `<p class="text-sm text-slate-500">No education details added yet.</p>`
+                }
+              </div>
+              <div>
+                <h3 class="text-base font-semibold text-slate-900 mb-2">Certificates</h3>
+                ${certificatesHTML
+                  ? `<ul class="space-y-1 text-sm text-slate-700 mb-4">${certificatesHTML}</ul>`
+                  : `<p class="text-sm text-slate-500 mb-4">No certificates listed yet.</p>`
+                }
+                ${certificatePhotosHTML
+                  ? `<div class="grid grid-cols-2 gap-3 mt-2">${certificatePhotosHTML}</div>`
+                  : ''
+                }
+              </div>
+            </section>
+
+            <section class="bg-white/95 rounded-3xl shadow-soft p-6">
+              <h3 class="text-base font-semibold text-slate-900 mb-3">Reviews & Testimonials</h3>
+              ${testimonialsHTML
+                ? `<ul class="space-y-2">${testimonialsHTML}</ul>`
+                : `<p class="text-sm text-slate-500">No reviews yet. Be the first to book and leave a review.</p>`
+              }
+            </section>
+          </div>
+
+          <!-- Right column -->
+          <div class="space-y-8">
+            <section class="bg-white/95 rounded-3xl shadow-soft p-6">
+              <h3 class="text-base font-semibold text-slate-900 mb-3">Quick info</h3>
+              <dl class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <dt class="text-slate-500">Category</dt>
+                  <dd class="text-slate-800">${p.category}</dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt class="text-slate-500">Location</dt>
+                  <dd class="text-slate-800">${p.location}</dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt class="text-slate-500">Hourly rate</dt>
+                  <dd class="text-slate-800">LKR ${fmt(p.rate)}</dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt class="text-slate-500">Languages</dt>
+                  <dd class="text-slate-800">${p.languages || '—'}</dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt class="text-slate-500">Verification</dt>
+                  <dd class="text-slate-800">${p.verified ? 'ID verified' : 'Not verified yet'}</dd>
+                </div>
+              </dl>
+            </section>
+
+            <section class="bg-white/95 rounded-3xl shadow-soft p-6">
+              <h3 class="text-base font-semibold text-slate-900 mb-3">Contact & Booking</h3>
+              <p class="text-sm text-slate-600 mb-4">
+                To confirm availability and make a booking, use the Fix app or website booking flow.
+              </p>
+              <a
+                href="index.html#browse"
+                class="block w-full text-center px-4 py-2.5 rounded-xl bg-fix-600 text-white text-sm font-semibold shadow-soft hover:bg-fix-700"
+              >
+                Go to booking page
+              </a>
+            </section>
+          </div>
+        </div>
+
+        <section class="bg-white/95 rounded-3xl shadow-soft p-6 mb-16">
+          <h3 class="text-base font-semibold text-slate-900 mb-4">Work gallery</h3>
+          ${galleryHTML
+            ? `<div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">${galleryHTML}</div>`
+            : `<p class="text-sm text-slate-500">No photos uploaded yet.</p>`
+          }
+        </section>
+      `;
+    }
+
+    // -------- Notifications (uses bookings from same localStorage as index) --------
+    function getUpcomingBookings(days = 14) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const ahead = new Date();
+      ahead.setDate(today.getDate() + days);
+      ahead.setHours(23, 59, 59, 999);
+
+      return (state.bookings || [])
+        .filter((b) => b.status !== 'Cancelled' && b.date)
+        .map((b) => ({ ...b, dateObj: new Date(b.date) }))
+        .filter((b) => !isNaN(b.dateObj) && b.dateObj >= today && b.dateObj <= ahead)
+        .sort((a, b) => a.dateObj - b.dateObj);
+    }
+
+    function updateNotifyBadge() {
+      const badge = $('#notify-badge');
+      if (!badge) return;
+      const n = getUpcomingBookings().length;
+      badge.textContent = n;
+      badge.classList.toggle('hidden', n === 0);
+    }
+
+    function renderNotifyPanel() {
+      const list = $('#notify-list');
+      if (!list) return;
+      const upcoming = getUpcomingBookings(14);
+
+      if (upcoming.length === 0) {
+        list.innerHTML = `
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-600">
+            No upcoming bookings. Once you confirm a booking on Fix, reminders will appear here.
           </div>
         `;
         return;
       }
 
-      document.title = `${p.name} – Fix provider profile`;
-
-      const educationHTML = p.education && p.education.length
-        ? `<ul class="list-disc pl-5 space-y-1 text-slate-700">
-             ${p.education.map(e => `<li>${e}</li>`).join('')}
-           </ul>`
-        : `<p class="text-slate-500 text-sm">No education details added yet.</p>`;
-
-      const certificatesHTML = p.certificates && p.certificates.length
-        ? `<ul class="list-disc pl-5 space-y-1 text-slate-700">
-             ${p.certificates.map(c => `<li>${c}</li>`).join('')}
-           </ul>`
-        : `<p class="text-slate-500 text-sm">No certificates added yet.</p>`;
-
-      const testimonialsHTML = p.testimonials && p.testimonials.length
-        ? `<div class="space-y-3">
-             ${p.testimonials.map(t => `
-               <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-700">
-                 ${t}
-               </div>
-             `).join('')}
-           </div>`
-        : `<p class="text-slate-500 text-sm">No testimonials added yet.</p>`;
-
-      const galleryHTML = p.photos && p.photos.length
-        ? `<div class="grid sm:grid-cols-2 gap-4">
-             ${p.photos.map(url => `
-               <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                 <img src="${url}" alt="Work photo for ${p.name}" class="w-full h-48 object-cover">
-               </div>
-             `).join('')}
-           </div>`
-        : `<p class="text-slate-500 text-sm">No photos uploaded yet.</p>`;
-
-      root.innerHTML = `
-        <div class="mb-4">
-          <a href="index.html#browse" class="inline-flex items-center text-sm text-emerald-100 hover:text-white">
-            ← Back to browse providers
-          </a>
+      list.innerHTML = upcoming.map((b) => `
+        <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm space-y-1">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold text-slate-900">
+              ${b.category} with ${b.providerName}
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">upcoming</span>
+          </div>
+          <div class="text-slate-600">${b.date} • ${b.hours}h</div>
+          <div class="text-xs text-slate-500">Total: LKR ${fmt(b.total)}</div>
         </div>
-
-        <div class="bg-white/95 rounded-3xl shadow-soft border border-slate-200 p-6 sm:p-8 space-y-8">
-          <!-- Top profile summary -->
-          <div class="flex flex-col md:flex-row gap-6">
-            <div class="flex flex-col items-center md:items-start gap-3">
-              <div class="w-32 h-32 rounded-full bg-white border border-slate-300 overflow-hidden flex items-center justify-center">
-                <img 
-                  src="${p.avatar}" 
-                  onerror="this.src='profile.jpg';"
-                  alt="${p.name}" 
-                  class="w-full h-full object-cover"
-                />
-              </div>
-              <div class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
-                ${p.category}
-              </div>
-            </div>
-
-            <div class="flex-1 space-y-4">
-              <div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">${p.name}</h1>
-                <p class="mt-1 text-slate-600">${p.category} • ${p.location}</p>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-3 text-sm">
-                <div class="flex items-center gap-1 text-yellow-500">
-                  <span>★★★★★</span>
-                  <span class="text-slate-700">${p.rating}</span>
-                </div>
-                ${p.verified ? `
-                  <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
-                    Verified provider
-                  </span>` : `
-                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
-                    Not yet verified
-                  </span>
-                `}
-                <span class="text-slate-500">Languages: ${p.languages || 'N/A'}</span>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-4">
-                <div>
-                  <div class="text-xs text-slate-500 uppercase tracking-wide">Rate</div>
-                  <div class="text-2xl font-extrabold text-slate-900">LKR ${fmt(p.rate)} <span class="text-base font-medium text-slate-500">/ hour</span></div>
-                </div>
-                <div class="flex gap-3">
-                  <a href="index.html#browse" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">
-                    Book on Fix
-                  </a>
-                  <button class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-medium bg-white hover:bg-slate-50">
-                    Contact details (demo)
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- About + Education + Certificates -->
-          <div class="grid md:grid-cols-2 gap-8">
-            <div class="space-y-4">
-              <div>
-                <h2 class="text-lg font-bold text-slate-900">About</h2>
-                <p class="mt-1 text-slate-700">${p.bio || 'No description provided yet.'}</p>
-              </div>
-              <div>
-                <h2 class="text-lg font-bold text-slate-900">Education</h2>
-                <div class="mt-2">
-                  ${educationHTML}
-                </div>
-              </div>
-            </div>
-
-            <div class="space-y-4">
-              <div>
-                <h2 class="text-lg font-bold text-slate-900">Certificates</h2>
-                <div class="mt-2">
-                  ${certificatesHTML}
-                </div>
-              </div>
-              <div>
-                <h2 class="text-lg font-bold text-slate-900">Reviews</h2>
-                <div class="mt-2">
-                  ${testimonialsHTML}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Gallery / Work photos (can also be used as certificate photos) -->
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <h2 class="text-lg font-bold text-slate-900">Gallery & certificate photos</h2>
-              <span class="text-xs text-slate-500">Demo images only</span>
-            </div>
-            ${galleryHTML}
-          </div>
-        </div>
-      `;
+      `).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', renderProfile);
+    function initNotifyUI() {
+      const notifyBtn = $('#notify-btn-nav');
+      const notifyPanel = $('#notify-panel');
+      const notifyClose = $('#notify-close');
+      const wrapper = $('#notify-wrapper');
+
+      function togglePanel() {
+        renderNotifyPanel();
+        notifyPanel.classList.toggle('hidden');
+      }
+
+      function hidePanel() {
+        notifyPanel.classList.add('hidden');
+      }
+
+      notifyBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePanel();
+      });
+
+      notifyClose?.addEventListener('click', (e) => {
+        e.preventDefault();
+        hidePanel();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (wrapper && !wrapper.contains(e.target)) hidePanel();
+      });
+    }
+
+    // -------- Login modal (same behaviour as index) --------
+    function initLogin() {
+      const loginBtn = $('#btn-login');
+      const loginModal = $('#login-modal');
+      const loginForm = $('#login-form');
+      const loginClose = $('#login-close');
+      const loginCancel = $('#login-cancel');
+
+      function updateNavbar() {
+        let user = null;
+        try {
+          user = JSON.parse(localStorage.getItem('fix-user')) || null;
+        } catch {}
+        if (!loginBtn) return user;
+
+        if (user && user.name) {
+          loginBtn.textContent = `Hi, ${user.name.split(' ')[0]}!`;
+          loginBtn.classList.remove('bg-white', 'text-fix-700');
+          loginBtn.classList.add('bg-fix-600', 'text-white', 'cursor-default');
+          loginBtn.disabled = true;
+        } else {
+          loginBtn.textContent = 'Sign in';
+          loginBtn.classList.remove('bg-fix-600', 'text-white', 'cursor-default');
+          loginBtn.classList.add('bg-white', 'text-fix-700');
+          loginBtn.disabled = false;
+        }
+        return user;
+      }
+
+      function openLogin() {
+        if (!loginModal) return;
+        loginModal.classList.remove('hidden');
+        loginModal.classList.add('flex');
+      }
+
+      function closeLogin() {
+        if (!loginModal) return;
+        loginModal.classList.add('hidden');
+        loginModal.classList.remove('flex');
+        loginForm?.reset();
+      }
+
+      function toast(msg) {
+        const el = document.createElement('div');
+        el.textContent = msg;
+        el.className = 'fixed bottom-6 right-6 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-soft';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
+      }
+
+      let user = updateNavbar();
+
+      loginBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        user = updateNavbar();
+        if (!user) openLogin();
+      });
+
+      loginClose?.addEventListener('click', closeLogin);
+      loginCancel?.addEventListener('click', closeLogin);
+      loginModal?.addEventListener('click', (e) => {
+        if (e.target === loginModal) closeLogin();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLogin();
+      });
+
+      loginForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = $('#login-name')?.value.trim();
+        const email = $('#login-email')?.value.trim();
+        if (!name || !email) return;
+        localStorage.setItem('fix-user', JSON.stringify({ name, email }));
+        closeLogin();
+        updateNavbar();
+        toast(`✅ Welcome, ${name}!`);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
+      state = db.load();
+      renderProfile();
+      updateNotifyBadge();
+      initNotifyUI();
+      initLogin();
+    });
   </script>
 </body>
 </html>
