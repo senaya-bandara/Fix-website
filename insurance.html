@@ -140,10 +140,7 @@
       { title: 'On-Job Accident Protection', limit: 'Included' }
     ],
 
-    insuranceDocs: [
-      "policy-doc-1.jpg",
-      "policy-doc-2.jpg"
-    ],
+  
 
     claims: [
       {
@@ -185,11 +182,7 @@
       `).join('');
 
       // Documents Section
-      const docsHTML = p.insuranceDocs.map(d => `
-        <a href="${d}" target="_blank">
-          <img src="${d}" class="w-full h-40 object-cover rounded-xl border border-slate-300 hover:opacity-90 transition" />
-        </a>
-      `).join('');
+    
 
       // Claims Section
       const claimsHTML = p.claims.map(c => `
@@ -255,14 +248,7 @@
           </a>
         </section>
 
-        <!-- Documents -->
-        <section class="mb-10">
-          <h2 class="text-xl font-bold mb-4">Verification Documents</h2>
-          <div class="grid sm:grid-cols-3 gap-4">
-            ${docsHTML}
-          </div>
-        </section>
-
+  
         <!-- Claims History -->
         <section class="mb-16">
           <h2 class="text-xl font-bold mb-4">Claims History</h2>
