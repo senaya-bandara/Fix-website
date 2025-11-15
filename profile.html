@@ -3,9 +3,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Fix — Provider Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Detailed portfolio of a Fix service provider." />
+  <title>Fix — Provider profile</title>
+  <meta name="description" content="Fix service provider profile page." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -30,25 +30,62 @@
   </script>
   <style>
     html, body { height:100%; }
+    .clip-blob { clip-path: path('M40 0C68 0 90 18 100 45c10 27 5 54-12 72S47 139 25 130 0 98 0 70 12 0 40 0z'); }
   </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800 font-sans">
-  <header class="bg-gradient-to-r from-fix-600 to-fix-800 text-white shadow-soft">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-      <a href="index.html#browse" class="inline-flex items-center gap-2 text-sm font-medium hover:opacity-90">
-        <span class="inline-flex h-8 w-8 rounded-full bg-white/10 items-center justify-center">&larr;</span>
-        <span>Back to Fix</span>
-      </a>
-      <div class="text-lg font-semibold">Provider profile</div>
-      <div class="text-sm opacity-0">_</div>
-    </div>
+<body class="text-slate-800 font-sans">
+  <!-- Full-page background gradient (same style as index.html) -->
+  <div class="fixed inset-0 -z-50">
+    <div class="absolute inset-0 bg-gradient-to-br from-[#4EC67E] via-[#1F6D47] to-[#0B3E29]"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(60%_80%_at_70%_10%,rgba(255,255,255,0.18),transparent_60%)]"></div>
+  </div>
+
+  <!-- Header / Top Bar (copied style from index.html) -->
+  <header class="relative">
+    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#4EC67E] via-[#1F6D47] to-[#0B3E29] opacity-95"></div>
+    <div class="absolute right-[-80px] top-[-80px] w-[280px] h-[280px] clip-blob bg-white/10"></div>
+
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-white/90 flex items-center justify-center shadow-soft">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 text-fix-600">
+            <path fill="currentColor" d="M5 13h5v6H5zm9-8h5v14h-5zM5 5h5v6H5zm9 10h5v4h-5z"/>
+          </svg>
+        </div>
+        <a href="index.html#home" class="text-white text-2xl font-extrabold tracking-tight">Fix</a>
+      </div>
+
+      <div class="hidden md:flex items-center text-white/90 font-medium divide-x divide-white/25">
+        <a href="index.html#browse" class="px-3 hover:text-white">Browse</a>
+        <a href="index.html#requests" class="px-3 hover:text-white">Requests</a>
+        <a href="index.html#become-pro" class="px-3 hover:text-white">Become a Pro</a>
+        <a href="index.html#bookings" class="px-3 hover:text-white">My Bookings</a>
+        <a href="index.html#emergency" class="px-3 hover:text-white">Emergency Services</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">Back to home</a>
+      </div>
+    </nav>
   </header>
 
-  <main id="profile-root" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- filled by JS -->
+  <!-- Main Profile Content -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <section id="profile-root" class="space-y-8">
+      <!-- Filled by JavaScript -->
+    </section>
   </main>
 
+  <!-- Simple footer strip -->
+  <footer class="border-t border-slate-200 bg-white/90 mt-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center text-sm text-slate-500">
+      <span>© <span id="year"></span> Fix.</span>
+      <a href="index.html" class="text-fix-600 hover:underline">Go back to main app →</a>
+    </div>
+  </footer>
+
   <script>
+    // Same base providers as index.html (ids must match)
     const providers = [
       {
         id: 'p1',
@@ -60,7 +97,7 @@
         verified: true,
         languages: 'Sinhala, English',
         avatar: 'profile.jpg',
-        bio: 'Compassionate caregiver with 6+ years hospital experience. First aid certified. Experienced in hospital discharge care, mobility support, medication reminders and companionship for seniors living alone.',
+        bio: 'Compassionate caregiver with 6+ years hospital experience. First aid certified.',
         education: [
           'Diploma in Nursing – School of Nursing Colombo',
           'Certificate in Geriatric Care – Ministry of Health, Sri Lanka'
@@ -69,48 +106,38 @@
           'First Aid & CPR – Red Cross Sri Lanka',
           'Elder Care Specialisation – Private Hospital Colombo'
         ],
-        certificatePhotos: [
-          'certificatemedalusjmdcl-1.jpg',
-          '1692267521926.jpeg'
-        ],
         testimonials: [
-          '“She cared for my mother with patience and kindness. Always on time and very gentle.” – Mrs. Perera',
-          '“We were able to rest because we knew our father was in safe hands.” – The Fernando Family'
+          '“She cared for my mother with patience and kindness.” – Mrs. Perera',
+          '“Very reliable and professional caregiver.” – Dr. Fernando'
         ],
         photos: [
-          'WhatsApp-Image-2024-12-30-at-12.39.18_49ea04f1.jpg',
-          'WhatsApp-Image-2024-12-30-at-12.46.45_6e3d88b1.jpg'
+          'https://placehold.co/600x380?text=Elder+care+home+visit'
         ]
       },
       {
         id: 'p2',
         name: 'Ravi Kannan',
-        category: 'Driving',
+        category: 'Electrician',
         location: 'Kandy',
         rate: 1800,
         rating: 4.6,
         verified: false,
         languages: 'Tamil, Sinhala',
         avatar: 'profile.jpg',
-        bio: 'Professional driver with more than 8 years of experience in city and long-distance routes. Specialised in airport transfers and business travel.',
+        bio: 'Experienced electrician specialising in household wiring, power troubleshooting, lighting installation, and small appliance repairs.',
         education: [
-          'Professional Driving License – Heavy & Light Vehicles',
-          'Defensive Driving Training – AA Sri Lanka'
+          'NVQ Level 4 in Electrical and Electronic Technology – VTA',
+          'Apprenticeship in Domestic Electrical Work – Kandy'
         ],
         certificates: [
-          'Police Clearance – Clean Record',
-          'Tourist Transport Certificate – SLTDA'
-        ],
-        certificatePhotos: [
-          '1.webp',
-        
+          'Government Approved Wireman License',
+          'Electrical Safety & PPE Training – OSH Sri Lanka'
         ],
         testimonials: [
-          '“Safe driver even in bad weather conditions. Highly recommended for family trips.” – Jayasinghe Family'
+          '“Fixed our house wiring issues quickly and safely.” – Jayasinghe Family'
         ],
         photos: [
-          '85bead92-2e44-4692-b579-3ddf03a9a84b.jpg',
-          'WhatsApp-Image-2024-10-25-at-1.31.53-PM-2.webp'
+          'https://placehold.co/600x380?text=Electrical+panel+work'
         ]
       },
       {
@@ -123,7 +150,7 @@
         verified: true,
         languages: 'Sinhala',
         avatar: 'profile.jpg',
-        bio: 'Deep-clean specialist for apartments, offices and post-renovation sites. Focus on detail, hygiene and safe use of cleaning chemicals.',
+        bio: 'Deep-clean specialist for apartments and offices.',
         education: [
           'Housekeeping Course – VTA',
           'Chemical Safety Workshop – Private Institute'
@@ -131,15 +158,11 @@
         certificates: [
           'Safe Use of Cleaning Chemicals – VTA'
         ],
-        certificatePhotos: [
-          'https://placehold.co/600x400?text=Chemical+Safety+Certificate'
-        ],
         testimonials: [
-          '“Our apartment is spotless after her visit. She even organised our cupboards.” – Mr. Silva'
+          '“Our apartment is spotless after her visit.” – Mr. Silva'
         ],
         photos: [
-          'https://placehold.co/800x480?text=Apartment+deep+clean',
-          'https://placehold.co/800x480?text=Office+cleanup'
+          'https://placehold.co/600x380?text=Apartment+deep+clean'
         ]
       },
       {
@@ -152,7 +175,7 @@
         verified: true,
         languages: 'Sinhala',
         avatar: 'profile.jpg',
-        bio: 'Home cook providing fresh Sri Lankan meals for families and small events. Special focus on vegetarian, vegan and low-salt options.',
+        bio: 'Sri Lankan home-cooked meals with vegetarian and custom diet options.',
         education: [
           'Cookery Certificate – SLITHM',
           'Vegetarian Cuisine Training – Private Institute'
@@ -160,15 +183,11 @@
         certificates: [
           'Food Safety & Hygiene – Ministry of Health'
         ],
-        certificatePhotos: [
-          'https://placehold.co/600x400?text=Food+Safety+Certificate'
-        ],
         testimonials: [
-          '“Food was fresh, delicious and hygienic. Our guests loved the curries.” – Karunaratne Family'
+          '“Food was fresh, delicious, and hygienic.” – Karunaratne Family'
         ],
         photos: [
-          'https://placehold.co/800x480?text=Sri+Lankan+buffet',
-          'https://placehold.co/800x480?text=Home+cooked+meals'
+          'https://placehold.co/600x380?text=Sri+Lankan+rice+and+curry'
         ]
       },
       {
@@ -181,7 +200,7 @@
         verified: true,
         languages: 'Sinhala, English',
         avatar: 'profile.jpg',
-        bio: 'Child-care specialist trained in early childhood development. Experienced with toddlers, school-going children and special needs support.',
+        bio: 'Child-care specialist trained in early childhood development.',
         education: [
           'Diploma in Early Childhood Education',
           'Short Course in Child Psychology'
@@ -190,16 +209,11 @@
           'CPR & First Aid for Children – Red Cross',
           'Child Safety Training – NGO Programme'
         ],
-        certificatePhotos: [
-          'https://placehold.co/600x400?text=CPR+Certificate',
-          'https://placehold.co/600x400?text=Child+Safety+Certificate'
-        ],
         testimonials: [
-          '“She keeps kids engaged with creative activities instead of screens.” – Mrs. Rodrigo'
+          '“She keeps kids engaged with creative activities.” – Mrs. Rodrigo'
         ],
         photos: [
-          'https://placehold.co/800x480?text=Story+time',
-          'https://placehold.co/800x480?text=Arts+and+crafts'
+          'https://placehold.co/600x380?text=Kids+activities'
         ]
       },
       {
@@ -212,7 +226,7 @@
         verified: true,
         languages: 'Sinhala, English',
         avatar: 'profile.jpg',
-        bio: 'Event waiter and setup crew for weddings, parties and corporate events. Handles buffet service, table setup and basic guest coordination.',
+        bio: 'Event waiter and setup crew for weddings and corporate functions.',
         education: [
           'Event Assistant Course – Vocational Institute'
         ],
@@ -220,16 +234,11 @@
           'Food Handling Certificate – Ministry of Health',
           'Event Safety Basics Workshop'
         ],
-        certificatePhotos: [
-          'https://placehold.co/600x400?text=Food+Handling+Certificate',
-          'https://placehold.co/600x400?text=Event+Safety+Workshop'
-        ],
         testimonials: [
-          '“Our wedding ran very smoothly thanks to Ahamed and his team.” – Nadeesha & Nalin'
+          '“Our wedding ran very smoothly thanks to Ahamed.” – Nadeesha & Nalin'
         ],
         photos: [
-          'https://placehold.co/800x480?text=Wedding+buffet+setup',
-          'https://placehold.co/800x480?text=Corporate+event+service'
+          'https://placehold.co/600x380?text=Wedding+buffet+setup'
         ]
       }
     ];
@@ -239,161 +248,161 @@
     }
 
     function renderProfile() {
-      const root = document.getElementById('profile-root');
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
+      const root = document.getElementById('profile-root');
+      document.getElementById('year').textContent = new Date().getFullYear();
 
-      const p = providers.find((x) => x.id === id) || providers[0];
+      const p = providers.find(x => x.id === id) || providers[0];
 
       if (!p) {
         root.innerHTML = `
-          <div class="bg-white rounded-2xl shadow-soft p-6 mt-8 text-center">
-            <h1 class="text-xl font-bold mb-2">Provider not found</h1>
-            <p class="text-slate-600 mb-4">This profile is not available.</p>
-            <a href="index.html#browse" class="inline-flex px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">Back to Fix</a>
+          <div class="bg-white/90 rounded-2xl p-8 shadow-soft text-center">
+            <h1 class="text-2xl font-extrabold text-slate-900 mb-2">Provider not found</h1>
+            <p class="text-slate-600 mb-4">The profile you are looking for does not exist.</p>
+            <a href="index.html#browse" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700 inline-block">Go back to browse</a>
           </div>
         `;
         return;
       }
 
+      document.title = `${p.name} – Fix provider profile`;
+
+      const educationHTML = p.education && p.education.length
+        ? `<ul class="list-disc pl-5 space-y-1 text-slate-700">
+             ${p.education.map(e => `<li>${e}</li>`).join('')}
+           </ul>`
+        : `<p class="text-slate-500 text-sm">No education details added yet.</p>`;
+
+      const certificatesHTML = p.certificates && p.certificates.length
+        ? `<ul class="list-disc pl-5 space-y-1 text-slate-700">
+             ${p.certificates.map(c => `<li>${c}</li>`).join('')}
+           </ul>`
+        : `<p class="text-slate-500 text-sm">No certificates added yet.</p>`;
+
+      const testimonialsHTML = p.testimonials && p.testimonials.length
+        ? `<div class="space-y-3">
+             ${p.testimonials.map(t => `
+               <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-700">
+                 ${t}
+               </div>
+             `).join('')}
+           </div>`
+        : `<p class="text-slate-500 text-sm">No testimonials added yet.</p>`;
+
+      const galleryHTML = p.photos && p.photos.length
+        ? `<div class="grid sm:grid-cols-2 gap-4">
+             ${p.photos.map(url => `
+               <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                 <img src="${url}" alt="Work photo for ${p.name}" class="w-full h-48 object-cover">
+               </div>
+             `).join('')}
+           </div>`
+        : `<p class="text-slate-500 text-sm">No photos uploaded yet.</p>`;
+
       root.innerHTML = `
-        <section class="mt-6">
-          <div class="bg-white rounded-2xl shadow-soft p-6 md:p-8">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-              <div class="flex items-start gap-4">
+        <div class="mb-4">
+          <a href="index.html#browse" class="inline-flex items-center text-sm text-emerald-100 hover:text-white">
+            ← Back to browse providers
+          </a>
+        </div>
+
+        <div class="bg-white/95 rounded-3xl shadow-soft border border-slate-200 p-6 sm:p-8 space-y-8">
+          <!-- Top profile summary -->
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-col items-center md:items-start gap-3">
+              <div class="w-32 h-32 rounded-full bg-white border border-slate-300 overflow-hidden flex items-center justify-center">
                 <img 
                   src="${p.avatar}" 
                   onerror="this.src='profile.jpg';"
-                  class="w-24 h-24 rounded-full object-contain bg-white border border-slate-300 p-1"
+                  alt="${p.name}" 
+                  class="w-full h-full object-cover"
                 />
+              </div>
+              <div class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
+                ${p.category}
+              </div>
+            </div>
+
+            <div class="flex-1 space-y-4">
+              <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">${p.name}</h1>
+                <p class="mt-1 text-slate-600">${p.category} • ${p.location}</p>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3 text-sm">
+                <div class="flex items-center gap-1 text-yellow-500">
+                  <span>★★★★★</span>
+                  <span class="text-slate-700">${p.rating}</span>
+                </div>
+                ${p.verified ? `
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
+                    Verified provider
+                  </span>` : `
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+                    Not yet verified
+                  </span>
+                `}
+                <span class="text-slate-500">Languages: ${p.languages || 'N/A'}</span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-4">
                 <div>
-                  <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900">${p.name}</h1>
-                  <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
-                  <div class="mt-2 flex flex-wrap items-center gap-2 text-sm">
-                    <span class="inline-flex items-center gap-1">
-                      <span class="text-yellow-500">★★★★★</span>
-                      <span class="font-semibold">${p.rating}</span>
-                    </span>
-                    ${p.verified ? `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">Verified</span>` : ''}
-                    <span class="text-slate-500">Languages: ${p.languages}</span>
-                  </div>
+                  <div class="text-xs text-slate-500 uppercase tracking-wide">Rate</div>
+                  <div class="text-2xl font-extrabold text-slate-900">LKR ${fmt(p.rate)} <span class="text-base font-medium text-slate-500">/ hour</span></div>
+                </div>
+                <div class="flex gap-3">
+                  <a href="index.html#browse" class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700">
+                    Book on Fix
+                  </a>
+                  <button class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-medium bg-white hover:bg-slate-50">
+                    Contact details (demo)
+                  </button>
                 </div>
               </div>
-              <div class="text-right space-y-2">
-                <div class="text-sm text-slate-500">Starting from</div>
-                <div class="text-2xl font-extrabold">LKR ${fmt(p.rate)} <span class="text-base font-normal text-slate-500">/ hour</span></div>
-                <a href="index.html#browse" class="inline-flex justify-center px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700 text-sm">Book via Fix</a>
+            </div>
+          </div>
+
+          <!-- About + Education + Certificates -->
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+              <div>
+                <h2 class="text-lg font-bold text-slate-900">About</h2>
+                <p class="mt-1 text-slate-700">${p.bio || 'No description provided yet.'}</p>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold text-slate-900">Education</h2>
+                <div class="mt-2">
+                  ${educationHTML}
+                </div>
               </div>
             </div>
 
-            <p class="mt-6 text-slate-700 leading-relaxed">${p.bio}</p>
-          </div>
-        </section>
-
-        <section class="mt-8 grid md:grid-cols-3 gap-6">
-          <div class="md:col-span-2 space-y-6">
-            <div class="bg-white rounded-2xl shadow-soft p-6">
-              <h2 class="text-lg font-bold mb-3">Education & qualifications</h2>
-              ${
-                (p.education && p.education.length)
-                  ? `<ul class="list-disc pl-5 space-y-1 text-slate-700">
-                      ${p.education.map((e) => `<li>${e}</li>`).join('')}
-                    </ul>`
-                  : `<p class="text-slate-500 text-sm">No education details provided.</p>`
-              }
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-soft p-6">
-              <h2 class="text-lg font-bold mb-3">Certificates</h2>
-              ${
-                (p.certificates && p.certificates.length)
-                  ? `<ul class="list-disc pl-5 space-y-1 text-slate-700 mb-4">
-                      ${p.certificates.map((c) => `<li>${c}</li>`).join('')}
-                    </ul>`
-                  : `<p class="text-slate-500 text-sm mb-2">No certificates uploaded.</p>`
-              }
-              ${
-                (p.certificatePhotos && p.certificatePhotos.length)
-                  ? `<div class="mt-2 grid sm:grid-cols-2 gap-4">
-                      ${p.certificatePhotos
-                        .map(
-                          (src) => `
-                          <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                            <img src="${src}" class="w-full h-40 object-cover" alt="Certificate of ${p.name}" />
-                          </div>`
-                        )
-                        .join('')}
-                    </div>`
-                  : ''
-              }
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-soft p-6">
-              <h2 class="text-lg font-bold mb-3">Testimonials</h2>
-              ${
-                (p.testimonials && p.testimonials.length)
-                  ? `<div class="space-y-3">
-                      ${p.testimonials
-                        .map(
-                          (t) => `
-                          <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                            ${t}
-                          </div>`
-                        )
-                        .join('')}
-                    </div>`
-                  : `<p class="text-slate-500 text-sm">No testimonials yet.</p>`
-              }
+            <div class="space-y-4">
+              <div>
+                <h2 class="text-lg font-bold text-slate-900">Certificates</h2>
+                <div class="mt-2">
+                  ${certificatesHTML}
+                </div>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold text-slate-900">Reviews</h2>
+                <div class="mt-2">
+                  ${testimonialsHTML}
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="space-y-6">
-            <div class="bg-white rounded-2xl shadow-soft p-6">
-              <h2 class="text-lg font-bold mb-3">Booking details</h2>
-              <ul class="space-y-2 text-sm text-slate-700">
-                <li><span class="font-semibold">Rate:</span> LKR ${fmt(p.rate)} per hour</li>
-                <li><span class="font-semibold">Location:</span> ${p.location}</li>
-                <li><span class="font-semibold">Languages:</span> ${p.languages}</li>
-                <li><span class="font-semibold">Category:</span> ${p.category}</li>
-              </ul>
-              <a href="index.html#browse" class="mt-4 inline-flex w-full justify-center px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold hover:bg-fix-700 text-sm">
-                Request this provider on Fix
-              </a>
+          <!-- Gallery / Work photos (can also be used as certificate photos) -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-bold text-slate-900">Gallery & certificate photos</h2>
+              <span class="text-xs text-slate-500">Demo images only</span>
             </div>
-
-            <div class="bg-white rounded-2xl shadow-soft p-6">
-              <h2 class="text-lg font-bold mb-3">Contact (via Fix)</h2>
-              <p class="text-sm text-slate-600 mb-3">
-                For safety, direct contact details are shared only after a booking is confirmed on Fix.
-              </p>
-              <ul class="text-sm text-slate-700 space-y-1">
-                <li>• Secure in-app messaging</li>
-                <li>• Call details shared after confirmation</li>
-                <li>• Support team available for issues</li>
-              </ul>
-            </div>
+            ${galleryHTML}
           </div>
-        </section>
-
-        <section class="mt-8 mb-10">
-          <div class="bg-white rounded-2xl shadow-soft p-6">
-            <h2 class="text-lg font-bold mb-3">Photos & work samples</h2>
-            ${
-              (p.photos && p.photos.length)
-                ? `<div class="grid sm:grid-cols-2 gap-4">
-                    ${p.photos
-                      .map(
-                        (src) => `
-                        <div class="overflow-hidden rounded-2xl border border-slate-200">
-                          <img src="${src}" class="w-full h-52 object-cover" alt="Work photo of ${p.name}" />
-                        </div>`
-                      )
-                      .join('')}
-                  </div>`
-                : `<p class="text-slate-500 text-sm">No photos uploaded yet.</p>`
-            }
-          </div>
-        </section>
+        </div>
       `;
     }
 
