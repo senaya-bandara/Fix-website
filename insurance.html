@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fix — ProShield Insurance</title>
+  <meta name="description" content="Fix ProShield Insurance Coverage Dashboard" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif']
+          },
+          colors: {
+            fix: {
+              50: '#ecfbf3',
+              100: '#d3f6e3',
+              200: '#a8ecc8',
+              300: '#7de1ae',
+              400: '#61d999',
+              500: '#4EC67E',
+              600: '#3fb870',
+              700: '#2fa861',
+              800: '#238a4f',
+              900: '#1b6d3f'
+            }
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(0,0,0,0.08)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-slate-50 font-sans text-slate-800">
+
+  <!-- Header -->
+<header class="relative">
+  <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#4EC67E] via-[#1F6D47] to-[#0B3E29] opacity-95"></div>
+  <div class="absolute right-[-80px] top-[-80px] w-[280px] h-[280px] clip-blob bg-white/10"></div>
+
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-white/90 flex items-center justify-center shadow-soft">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 text-fix-600">
+          <path fill="currentColor" d="M5 13h5v6H5zm9-8h5v14h-5zM5 5h5v6H5zm9 10h5v4h-5z"/>
+        </svg>
+      </div>
+      <a href="index.html#home" class="text-white text-2xl font-extrabold tracking-tight">Fix</a>
+    </div>
+
+    <div class="hidden md:flex items-center text-white/90 font-medium divide-x divide-white/25">
+      <a href="index.html#browse" class="px-3 hover:text-white">Browse</a>
+      <a href="index.html#requests" class="px-3 hover:text-white">Requests</a>
+      <a href="index.html#become-pro" class="px-3 hover:text-white">Become a Pro</a>
+      <a href="index.html#bookings" class="px-3 hover:text-white">My Bookings</a>
+      <a href="index.html#emergency" class="px-3 hover:text-white">Emergency Services</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button id="btn-login" class="hidden md:inline-flex px-4 py-2 rounded-xl bg-white text-fix-700 font-semibold shadow-soft hover:bg-slate-100">
+        Sign in
+      </button>
+
+      <div id="notify-wrapper" class="relative">
+        <button
+          id="notify-btn-nav"
+          class="p-2 rounded-full bg-white/90 text-fix-700 shadow-soft hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/60 relative"
+          aria-label="Notifications"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3a6 6 0 00-6 6v2.268c0 .58-.223 1.138-.62 1.553L4 14h16l-1.38-1.179a2.2 2.2 0 01-.62-1.553V9a6 6 0 00-6-6zm0 18a3 3 0 01-2.995-2.824L9 18h6a3 3 0 01-2.824 2.995L12 21z"/>
+          </svg>
+          <span
+            id="notify-badge"
+            class="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center hidden">
+            0
+          </span>
+        </button>
+
+        <div
+          id="notify-panel"
+          class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-soft border border-slate-200 z-50">
+          <div class="p-3 border-b border-slate-100">
+            <div class="font-semibold text-slate-900">Notifications</div>
+            <div class="text-xs text-slate-500">Upcoming bookings (next 14 days)</div>
+          </div>
+          <div id="notify-list" class="p-3 space-y-2 max-h-80 overflow-auto"></div>
+          <div class="p-2 border-t border-slate-100 text-right">
+            <button id="notify-close" class="text-sm text-slate-600 hover:text-slate-800">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <a
+        href="index.html#browse"
+        id="btn-post"
+        class="px-4 py-2 rounded-xl bg-fix-600 text-white font-semibold shadow-soft hover:bg-fix-700">
+        Post a Request
+      </a>
+    </div>
+  </nav>
+</header>
+
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto px-6 py-10">
+
+    <div id="insurance-root"></div>
+
+  </main>
+
+  <script>
+    // ---------------- Fallback Provider Data ------------------
+    const fallbackProviders = [
+      {
+        id: 'p1',
+        name: 'Nimali Jayasinghe',
+        category: 'Elder care',
+        location: 'Colombo',
+        rate: 2500,
+        rating: 4.9,
+        avatar: 'profile.jpg',
+        insuranceStatus: 'Active',
+        insurancePlan: 'Fix ProShield Plus',
+        insuranceFrom: '2025-01-01',
+        insuranceTo: '2026-01-01',
+        insuranceBenefits: [
+          { title: 'Accidental Damage Coverage', limit: 'LKR 500,000' },
+          { title: 'Medical / Injury Coverage', limit: 'LKR 100,000' },
+          { title: 'Public Liability', limit: 'LKR 150,000' },
+          { title: 'Theft / Loss Liability', limit: 'LKR 100,000' },
+          { title: 'On-Job Accident Protection', limit: 'Included' },
+          { title: 'Income Protection', limit: '10 paid days' }
+        ],
+        insuranceDocs: [
+          'nic-front.jpg',
+          'nic-back.jpg',
+          'policy-agreement.png'
+        ],
+        claims: [
+          { status: 'Approved', amount: '8,500', description: 'Broken rice cooker during cleaning', date: '2025-03-14' },
+          { status: 'Pending', amount: '12,000', description: 'Minor electrical burn expense', date: '2025-06-01' }
+        ]
+      }
+    ];
+
+    const $ = (s) => document.querySelector(s);
+
+    // -------------------------------------------------------------
+    // Render Page
+    // -------------------------------------------------------------
+    function renderInsurance() {
+      const root = $('#insurance-root');
+
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id') || 'p1';
+
+      const p = fallbackProviders.find(x => x.id === id) || fallbackProviders[0];
+
+      // Benefits Section
+      const benefitsHTML = p.insuranceBenefits.map(b => `
+        <div class="bg-white rounded-2xl p-4 shadow-soft border border-slate-200">
+          <div class="font-semibold">${b.title}</div>
+          <div class="text-fix-600 font-bold mt-1">${b.limit}</div>
+        </div>
+      `).join('');
+
+      // Documents Section
+      const docsHTML = p.insuranceDocs.map(d => `
+        <a href="${d}" target="_blank">
+          <img src="${d}" class="w-full h-40 object-cover rounded-xl border border-slate-300 hover:opacity-90 transition" />
+        </a>
+      `).join('');
+
+      // Claims Section
+      const claimsHTML = p.claims.map(c => `
+        <div class="p-4 bg-slate-100 rounded-xl border border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="font-bold">${c.description}</div>
+            <span class="px-2 py-1 rounded-full text-xs ${c.status === 'Approved'
+              ? 'bg-emerald-200 text-emerald-800'
+              : c.status === 'Pending'
+                ? 'bg-yellow-200 text-yellow-800'
+                : 'bg-red-200 text-red-800'}">
+              ${c.status}
+            </span>
+          </div>
+          <div class="text-sm text-slate-600 mt-1">${c.date}</div>
+          <div class="font-semibold mt-1">Amount: LKR ${c.amount}</div>
+        </div>
+      `).join('');
+
+      root.innerHTML = `
+        <!-- Profile Summary -->
+        <div class="bg-white rounded-3xl p-6 shadow-soft mb-10">
+          <div class="flex items-center gap-6">
+            <img src="${p.avatar}" class="w-24 h-24 rounded-full border-4 border-fix-200 object-cover" />
+
+            <div>
+              <h1 class="text-3xl font-bold">${p.name}</h1>
+              <p class="text-slate-600 mt-1">${p.category} • ${p.location}</p>
+
+              <span class="inline-block mt-2 px-3 py-1 rounded-full text-white text-sm
+                ${p.insuranceStatus === 'Active' ? 'bg-emerald-600' : 'bg-slate-600'}">
+                ${p.insuranceStatus} — ${p.insurancePlan}
+              </span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+              <div class="text-slate-500 text-sm">Coverage From</div>
+              <div class="font-bold text-lg">${p.insuranceFrom}</div>
+            </div>
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+              <div class="text-slate-500 text-sm">Coverage To</div>
+              <div class="font-bold text-lg">${p.insuranceTo}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefits -->
+        <section class="mb-10">
+          <h2 class="text-xl font-bold mb-4">Insurance Benefits</h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            ${benefitsHTML}
+          </div>
+        </section>
+
+        <!-- Policy Certificate -->
+        <section class="mb-10">
+          <h2 class="text-xl font-bold mb-3">Insurance Certificate</h2>
+          <a href="fake-policy.pdf" target="_blank"
+            class="inline-block px-5 py-3 bg-fix-600 text-white rounded-xl shadow-soft hover:bg-fix-700">
+            Download Policy Certificate (PDF)
+          </a>
+        </section>
+
+        <!-- Documents -->
+        <section class="mb-10">
+          <h2 class="text-xl font-bold mb-4">Verification Documents</h2>
+          <div class="grid sm:grid-cols-3 gap-4">
+            ${docsHTML}
+          </div>
+        </section>
+
+        <!-- Claims History -->
+        <section class="mb-16">
+          <h2 class="text-xl font-bold mb-4">Claims History</h2>
+          <div class="space-y-4">
+            ${claimsHTML}
+          </div>
+        </section>
+
+        <!-- Upgrade Plan -->
+        <section class="bg-white rounded-3xl p-8 shadow-soft border border-slate-200">
+          <h2 class="text-2xl font-bold mb-2">Upgrade to ProShield Premium</h2>
+          <p class="text-slate-700 mb-4">Get higher coverage, faster payouts, and zero deductibles.</p>
+          <button class="px-6 py-3 bg-fix-600 text-white rounded-xl hover:bg-fix-700 shadow-soft">
+            Upgrade Plan
+          </button>
+        </section>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', renderInsurance);
+  </script>
+</body>
+
+</html>
