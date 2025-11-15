@@ -69,6 +69,10 @@
           'First Aid & CPR – Red Cross Sri Lanka',
           'Elder Care Specialisation – Private Hospital Colombo'
         ],
+        certificatePhotos: [
+          'https://placehold.co/600x400?text=First+Aid+Certificate',
+          'https://placehold.co/600x400?text=Elder+Care+Certificate'
+        ],
         testimonials: [
           '“She cared for my mother with patience and kindness. Always on time and very gentle.” – Mrs. Perera',
           '“We were able to rest because we knew our father was in safe hands.” – The Fernando Family'
@@ -97,6 +101,10 @@
           'Police Clearance – Clean Record',
           'Tourist Transport Certificate – SLTDA'
         ],
+        certificatePhotos: [
+          'https://placehold.co/600x400?text=Police+Clearance',
+          'https://placehold.co/600x400?text=Tourist+Transport+Certificate'
+        ],
         testimonials: [
           '“Safe driver even in bad weather conditions. Highly recommended for family trips.” – Jayasinghe Family'
         ],
@@ -123,6 +131,9 @@
         certificates: [
           'Safe Use of Cleaning Chemicals – VTA'
         ],
+        certificatePhotos: [
+          'https://placehold.co/600x400?text=Chemical+Safety+Certificate'
+        ],
         testimonials: [
           '“Our apartment is spotless after her visit. She even organised our cupboards.” – Mr. Silva'
         ],
@@ -148,6 +159,9 @@
         ],
         certificates: [
           'Food Safety & Hygiene – Ministry of Health'
+        ],
+        certificatePhotos: [
+          'https://placehold.co/600x400?text=Food+Safety+Certificate'
         ],
         testimonials: [
           '“Food was fresh, delicious and hygienic. Our guests loved the curries.” – Karunaratne Family'
@@ -176,6 +190,10 @@
           'CPR & First Aid for Children – Red Cross',
           'Child Safety Training – NGO Programme'
         ],
+        certificatePhotos: [
+          'https://placehold.co/600x400?text=CPR+Certificate',
+          'https://placehold.co/600x400?text=Child+Safety+Certificate'
+        ],
         testimonials: [
           '“She keeps kids engaged with creative activities instead of screens.” – Mrs. Rodrigo'
         ],
@@ -201,6 +219,10 @@
         certificates: [
           'Food Handling Certificate – Ministry of Health',
           'Event Safety Basics Workshop'
+        ],
+        certificatePhotos: [
+          'https://placehold.co/600x400?text=Food+Handling+Certificate',
+          'https://placehold.co/600x400?text=Event+Safety+Workshop'
         ],
         testimonials: [
           '“Our wedding ran very smoothly thanks to Ahamed and his team.” – Nadeesha & Nalin'
@@ -285,10 +307,24 @@
               <h2 class="text-lg font-bold mb-3">Certificates</h2>
               ${
                 (p.certificates && p.certificates.length)
-                  ? `<ul class="list-disc pl-5 space-y-1 text-slate-700">
+                  ? `<ul class="list-disc pl-5 space-y-1 text-slate-700 mb-4">
                       ${p.certificates.map((c) => `<li>${c}</li>`).join('')}
                     </ul>`
-                  : `<p class="text-slate-500 text-sm">No certificates uploaded.</p>`
+                  : `<p class="text-slate-500 text-sm mb-2">No certificates uploaded.</p>`
+              }
+              ${
+                (p.certificatePhotos && p.certificatePhotos.length)
+                  ? `<div class="mt-2 grid sm:grid-cols-2 gap-4">
+                      ${p.certificatePhotos
+                        .map(
+                          (src) => `
+                          <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                            <img src="${src}" class="w-full h-40 object-cover" alt="Certificate of ${p.name}" />
+                          </div>`
+                        )
+                        .join('')}
+                    </div>`
+                  : ''
               }
             </div>
 
