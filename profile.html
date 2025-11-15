@@ -419,13 +419,14 @@
     .map(item => `<li class="flex gap-2"><span class="text-fix-500 mt-1">•</span><span>${item}</span></li>`)
     .join('');
 
- const certificatePhotosHTML = (p.certificatePhotos || [])
+const certificatePhotosHTML = (p.certificatePhotos || [])
   .map(src => `
-    <a href="${src}" target="_blank" class="block bg-slate-100 rounded-xl overflow-hidden border border-slate-200 hover:opacity-90 transition">
+    <div class="bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
       <img src="${src}" class="w-full h-40 object-cover" alt="Certificate" />
-    </a>
+    </div>
   `)
   .join('');
+
 
   const testimonialsHTML = (p.testimonials || [])
     .map(t => `<li class="border-l-4 border-fix-400 pl-3 text-slate-700 text-sm">${t}</li>`)
