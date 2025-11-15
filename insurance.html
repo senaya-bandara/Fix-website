@@ -121,27 +121,47 @@
   <script>
     // ---------------- Fallback Provider Data ------------------
     const fallbackProviders = [
+  {
+    id: 'p1',
+    name: 'Nimali Jayasinghe',
+    category: 'Elder care',
+    location: 'Colombo',
+    rate: 2500,
+    rating: 4.9,
+    avatar: 'profile.jpg',
+
+    insuranceStatus: 'Active',
+    insurancePlan: 'Fix ProShield Plus',
+    insuranceFrom: '2025-01-01',
+    insuranceTo: '2026-01-01',
+
+    insuranceBenefits: [
+      { title: 'Medical / Injury Coverage', limit: 'LKR 100,000' },
+      { title: 'On-Job Accident Protection', limit: 'Included' }
+    ],
+
+    insuranceDocs: [
+      "policy-doc-1.jpg",
+      "policy-doc-2.jpg"
+    ],
+
+    claims: [
       {
-        id: 'p1',
-        name: 'Nimali Jayasinghe',
-        category: 'Elder care',
-        location: 'Colombo',
-        rate: 2500,
-        rating: 4.9,
-        avatar: 'profile.jpg',
-        insuranceStatus: 'Active',
-        insurancePlan: 'Fix ProShield Plus',
-        insuranceFrom: '2025-01-01',
-        insuranceTo: '2026-01-01',
-        insuranceBenefits: [
-         
-          { title: 'Medical / Injury Coverage', limit: 'LKR 100,000' },
+        description: "Hospital bill for accidental slip",
+        status: "Approved",
+        date: "2025-02-14",
+        amount: "45,000"
+      },
+      {
+        description: "Minor injury on duty",
+        status: "Pending",
+        date: "2025-03-04",
+        amount: "12,000"
+      }
+    ]
+  }
+];
 
-
-          { title: 'On-Job Accident Protection', limit: 'Included' },
-        
-  
-    ];
 
     const $ = (s) => document.querySelector(s);
 
