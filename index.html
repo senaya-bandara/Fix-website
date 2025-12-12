@@ -1373,35 +1373,28 @@ $('#clear-browse')?.addEventListener('click', () => {
 
     }
 
-    // ------- Become a Pro dropdowns + request locations -------
-    function populateDropdowns() {
-      const catSelect = $('#pro-category');
-      const locSelect = $('#pro-location');
-      const reqLoc = $('#req-location');
+  function populateDropdowns() {
+  const catSelect = $('#filter-category');
+  const locSelect = $('#filter-location');
 
-      const categories = [...new Set((state.providers || []).map((p) => p.category))].sort();
-      const locations = [...new Set((state.providers || []).map((p) => p.location))].sort();
-      const fallbackLocations = ['Colombo', 'Gampaha', 'Kandy', 'Galle', 'Matara', 'Jaffna', 'Negombo', 'Kalutara'];
+  // Collect unique values
+  const categories = [...new Set((state.providers || []).map((p) => p.category))].sort();
+  const locations = [...new Set((state.providers || []).map((p) => p.location))].sort();
 
-      if (catSelect) {
-        catSelect.innerHTML =
-          `<option value="">Select category</option>` +
-          categories.map((c) => `<option value="${c}">${c}</option>`).join('');
-      }
+  // CATEGORY DROPDOWN
+  if (catSelect) {
+    catSelect.innerHTML =
+      `<option value="">All categories</option>` +
+      categories.map((c) => `<option value="${c}">${c}</option>`).join('');
+  }
 
-      if (locSelect) {
-        locSelect.innerHTML =
-          `<option value="">Select location</option>` +
-          locations.map((l) => `<option value="${l}">${l}</option>`).join('');
-      }
-
-      if (reqLoc) {
-        const list = locations.length ? locations : fallbackLocations;
-        reqLoc.innerHTML =
-          `<option value="" disabled selected>Select location</option>` +
-          list.map((l) => `<option value="${l}">${l}</option>`).join('');
-      }
-    }
+  // LOCATION DROPDOWN  ✅ NEW
+  if (locSelect) {
+    locSelect.innerHTML =
+      `<option value="">All locations</option>` +
+      locations.map((l) => `<option value="${l}">${l}</option>`).join('');
+  }
+}
 
     // ------- Become a Pro submit (adds to list only locally) -------
     function initProForm() {
