@@ -200,32 +200,46 @@
 
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <!-- Filters & Browse -->
-    <section id="browse" class="space-y-6">
-      <div class="flex items-end justify-between gap-4 flex-wrap">
-        <div>
-          <h2 class="text-2xl font-extrabold text-white">Browse providers</h2>
-          <p class="text-[#E6FFF1]">Filter by category, location, and rating</p>
-        </div>
-        <div class="flex gap-3">
-          <select id="filter-category" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
-            <option value="">All categories</option>
-          </select>
-          <select id="filter-location" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
-            <option value="">All locations</option>
-          </select>
-          <select id="sort-by" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
-            <option value="top">Sort: Top rated</option>
-            <option value="price-asc">Price: Low → High</option>
-            <option value="price-desc">Price: High → Low</option>
-          </select>
-          <button id="clear-browse" class="px-4 py-2 rounded-xl bg-white/70 border border-slate-200 hover:bg-white">Clear</button>
-        </div>
-      </div>
+<!-- Replace the Filters row inside #browse with this -->
+<section id="browse" class="space-y-6">
+  <div class="flex items-end justify-between gap-4 flex-wrap">
+    <div>
+      <h2 class="text-2xl font-extrabold text-white">Browse providers</h2>
+      <p class="text-[#E6FFF1]">Filter by category, location, rating and price</p>
+    </div>
+    <div class="flex gap-3 flex-wrap">
+      <select id="filter-category" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
+        <option value="">All categories</option>
+      </select>
 
-      <div id="browse-tiles" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-      <div id="providers-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </section>
+      <select id="filter-location" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
+        <option value="">All locations</option>
+      </select>
+
+      <!-- NEW: rating filter -->
+      <select id="filter-rating" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
+        <option value="">All ratings</option>
+        <option value="4.0">4.0★ and above</option>
+        <option value="4.5">4.5★ and above</option>
+        <option value="4.8">4.8★ and above</option>
+      </select>
+
+      <select id="sort-by" class="px-4 py-2 rounded-xl bg-white border border-slate-200">
+        <option value="top">Sort: Top rated</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+      </select>
+
+      <button id="clear-browse" class="px-4 py-2 rounded-xl bg-white/70 border border-slate-200 hover:bg-white">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <div id="browse-tiles" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  <div id="providers-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</section>
+
 
     <!-- Requests Board -->
     <section id="requests" class="space-y-6 mt-16">
@@ -888,79 +902,86 @@
     }
 
     // ------- Browse tiles -------
-    function renderBrowseTiles() {
-      const container = $('#browse-tiles');
-      if (!container) return;
+  // Replace the renderBrowseTiles function with this
+function renderBrowseTiles() {
+  const container = $('#browse-tiles');
+  if (!container) return;
 
-      let providers = [...(state.providers || [])];
+  let providers = [...(state.providers || [])];
 
-      // Filters
-      const catVal = $('#filter-category')?.value || '';
-      const locVal = $('#filter-location')?.value || '';
-      const sortVal = $('#sort-by')?.value || 'top';
+  // Filters
+  const catVal = $('#filter-category')?.value || '';
+  const locVal = $('#filter-location')?.value || '';
+  const ratingVal = $('#filter-rating')?.value || '';
+  const sortVal = $('#sort-by')?.value || 'top';
 
-      if (catVal) providers = providers.filter((p) => p.category === catVal);
-      if (locVal) providers = providers.filter((p) => p.location === locVal);
+  if (catVal) providers = providers.filter((p) => p.category === catVal);
+  if (locVal) providers = providers.filter((p) => p.location === locVal);
+  if (ratingVal) {
+    const minRating = parseFloat(ratingVal);
+    providers = providers.filter((p) => p.rating >= minRating);
+  }
 
-      if (sortVal === 'price-asc') {
-        providers.sort((a, b) => a.rate - b.rate);
-      } else if (sortVal === 'price-desc') {
-        providers.sort((a, b) => b.rate - a.rate);
-      } else {
-        providers.sort((a, b) => b.rating - a.rating);
-      }
+  if (sortVal === 'price-asc') {
+    providers.sort((a, b) => a.rate - b.rate);
+  } else if (sortVal === 'price-desc') {
+    providers.sort((a, b) => b.rate - a.rate);
+  } else {
+    providers.sort((a, b) => b.rating - a.rating);
+  }
 
-      if (!providers.length) {
-        container.innerHTML = `<div class="text-slate-200 col-span-full">No providers match these filters.</div>`;
-        return;
-      }
+  if (!providers.length) {
+    container.innerHTML = `<div class="text-slate-200 col-span-full">No providers match these filters.</div>`;
+    return;
+  }
 
-      container.innerHTML = providers
-        .map(
-          (p) => `
-          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex gap-3">
-                <a href="profile.html?id=${p.id}" class="shrink-0">
-                  <img 
-                    src="${p.avatar}" 
-                    onerror="this.src='profile.jpg';"
-                    class="w-12 h-12 rounded-full object-contain bg-white border border-slate-300 p-1"
-                  />
-                </a>
-                <div>
-                  <h3 class="text-lg font-bold">
-                    <a href="profile.html?id=${p.id}" class="text-fix-600 hover:underline">
-                      ${p.name}
-                    </a>
-                  </h3>
-                  <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
-                  <div class="mt-2 flex items-center gap-2 text-sm">
-                    <span class="text-yellow-500">★★★★★</span>
-                    <span class="text-slate-600">${p.rating}</span>
-                    ${p.verified ? '<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">Verified</span>' : ''}
-                  </div>
+  container.innerHTML = providers
+    .map(
+      (p) => `
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-soft hover:-translate-y-0.5 transition">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex gap-3">
+              <a href="profile.html?id=${p.id}" class="shrink-0">
+                <img 
+                  src="${p.avatar}" 
+                  onerror="this.src='profile.jpg';"
+                  class="w-12 h-12 rounded-full object-contain bg-white border border-slate-300 p-1"
+                />
+              </a>
+              <div>
+                <h3 class="text-lg font-bold">
+                  <a href="profile.html?id=${p.id}" class="text-fix-600 hover:underline">
+                    ${p.name}
+                  </a>
+                </h3>
+                <div class="mt-1 text-slate-600">${p.category} • ${p.location}</div>
+                <div class="mt-2 flex items-center gap-2 text-sm">
+                  <span class="text-yellow-500">★★★★★</span>
+                  <span class="text-slate-600">${p.rating}</span>
+                  ${p.verified ? '<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">Verified</span>' : ''}
                 </div>
               </div>
-              <div class="text-right">
-                <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
-                <div class="text-sm text-slate-600">per hour</div>
-              </div>
             </div>
-            <p class="mt-3 text-slate-700">${p.bio}</p>
-            <div class="mt-4 flex justify-between items-center">
-              <button class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600" data-book="${p.id}">Book</button>
-              <a href="profile.html?id=${p.id}" class="text-sm text-fix-600 hover:underline">View profile →</a>
+            <div class="text-right">
+              <div class="text-xl font-extrabold">LKR ${fmt(p.rate)}</div>
+              <div class="text-sm text-slate-600">per hour</div>
             </div>
           </div>
-        `
-        )
-        .join('');
+          <p class="mt-3 text-slate-700">${p.bio}</p>
+          <div class="mt-4 flex justify-between items-center">
+            <button class="px-4 py-2 rounded-xl bg-fix-500 text-white font-semibold hover:bg-fix-600" data-book="${p.id}">Book</button>
+            <a href="profile.html?id=${p.id}" class="text-sm text-fix-600 hover:underline">View profile →</a>
+          </div>
+        </div>
+      `
+    )
+    .join('');
 
-      container.querySelectorAll('[data-book]').forEach((btn) => {
-        btn.addEventListener('click', () => openBookModal(btn.dataset.book));
-      });
-    }
+  container.querySelectorAll('[data-book]').forEach((btn) => {
+    btn.addEventListener('click', () => openBookModal(btn.dataset.book));
+  });
+}
+
 
     // ------- Bookings list -------
     function renderBookings() {
@@ -1333,17 +1354,23 @@
         $('#browse').scrollIntoView({ behavior: 'smooth' });
       });
 
-      $('#clear-browse')?.addEventListener('click', () => {
-        resultsGrid.innerHTML = '';
-        browseTiles.classList.remove('hidden');
-        $('#q-service').value = '';
-        $('#q-location').value = '';
-        $('#q-date').value = '';
-        $('#filter-category').value = '';
-        $('#filter-location').value = '';
-        $('#sort-by').value = 'top';
-        renderBrowseTiles();
-      });
+ // In the clear-browse click handler, add rating reset
+$('#clear-browse')?.addEventListener('click', () => {
+  const resultsGrid = $('#providers-grid');
+  const browseTiles = $('#browse-tiles');
+
+  resultsGrid.innerHTML = '';
+  browseTiles.classList.remove('hidden');
+  $('#q-service').value = '';
+  $('#q-location').value = '';
+  $('#q-date').value = '';
+  $('#filter-category').value = '';
+  $('#filter-location').value = '';
+  $('#filter-rating').value = '';  // reset rating
+  $('#sort-by').value = 'top';
+  renderBrowseTiles();
+});
+
     }
 
     // ------- Become a Pro dropdowns + request locations -------
@@ -1555,9 +1582,12 @@
       initNotifyUI();
 
       // re-render browse when filters change
-      $('#filter-category')?.addEventListener('change', renderBrowseTiles);
-      $('#filter-location')?.addEventListener('change', renderBrowseTiles);
-      $('#sort-by')?.addEventListener('change', renderBrowseTiles);
+// In DOMContentLoaded, add this line with the other filter listeners
+$('#filter-category')?.addEventListener('change', renderBrowseTiles);
+$('#filter-location')?.addEventListener('change', renderBrowseTiles);
+$('#filter-rating')?.addEventListener('change', renderBrowseTiles); // NEW
+$('#sort-by')?.addEventListener('change', renderBrowseTiles);
+
     });
   </script>
 </body>
